@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第四课：手搓路线图，从零到首期验收</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">LESSON 0004</p>
+    <h1>手搓路线图：从零到首期验收</h1>
+    <p class="lead">一张完整地图：手搓工程骨架的每一步做什么、用什么命令、做完的标志是什么。看完你应该能说出"我现在在哪，下一步做什么"。</p>
+
+    <section class="card">
+      <h2>本课目标</h2>
+      <p>七步走完整个工程骨架。每一步都有明确的验证点，验证点出现才算做完。你不需要一次走完，但每一步都可以单独停、单独问。</p>
+    </section>
+
+    <section class="card">
+      <h2>地图总览</h2>
+      <ol>
+        <li>建目录骨架，零依赖，立刻有第一个胜利。</li>
+        <li>写 pom.xml，读懂每个依赖。</li>
+        <li>装 JDK 21，让 Maven 跑起来，听到第一声 BUILD SUCCESS。</li>
+        <li>写主类、配置、迁移脚本、测试，mvn test 全绿。</li>
+        <li>装 Docker，compose 起三个依赖容器。</li>
+        <li>启动应用，健康检查 UP，数据库三库就位。</li>
+        <li>提交 git，收尾。</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>第一步：建目录骨架</h2>
+      <p>在项目根目录执行（git bash）：</p>
+      <pre>mkdir -p backend/src/main/java/com/learningplatform
+mkdir -p backend/src/main/resources/db/migration
+mkdir -p backend/src/test/java/com/learningplatform
+mkdir -p deploy/mysql/init</pre>
+      <p><strong>验证点</strong>：ls 能看到上面四层目录都在。这一步不需要装任何东西，先获得掌控感。</p>
+      <p>卡住怎么办：路径写错就删了重来，目录操作零风险。</p>
+    </section>
+
+    <section class="card">
+      <h2>第二步：写 pom.xml</h2>
+      <p>在 backend/ 下新建 pom.xml。照抄已提交的版本可以，但每段都要能解释：parent 是版本事实，java.version 是 21，五个依赖各自管什么（web、actuator、flyway-core、flyway-mysql、mysql 驱动）。</p>
+      <p><strong>验证点</strong>：你能不看注释说清每个依赖的作用。记不住的打开 <a href="../reference/手搓工程速查.html">手搓速查</a> 对着讲。</p>
+      <p>卡住怎么办：先抄后懂，这一课的目标是"认识"，下一票才是"默写"。</p>
+    </section>
+
+    <section class="card">
+      <h2>第三步：装 JDK 21，让 Maven 跑起来</h2>
+      <p>winget install BellSoft.LibericaJDK.21，把 JAVA_HOME 指到 21，新开终端确认 java -version 显示 21。然后在 backend/ 下执行 ./mvnw validate。</p>
+      <p><strong>验证点</strong>：输出以 BUILD SUCCESS 结束。这是整个工程的第一声"通了"。</p>
+      <p>卡住怎么办：java -version 还是 17，说明 JAVA_HOME 没生效，新开终端再试；报 mvnw 找不到，先确认在 backend/ 目录里。</p>
+    </section>
+
+    <section class="card">
+      <h2>第四步：写主类、配置、迁移脚本、测试</h2>
+      <p>五个文件，五个意图：主类（入口）、application.yml（数据源指 iam、Flyway 开关、Actuator 暴露）、logback-spring.xml（日志格式）、V1__baseline.sql（基线迁移）、测试类（冒烟，不需要 Docker）。</p>
+      <p><strong>验证点</strong>：./mvnw test 全绿。这个测试特意排除数据源自动配置，所以没装 Docker 也能过。</p>
+      <p>卡住怎么办：测试报错看堆栈第一行，通常是类名或配置键拼错。</p>
+    </section>
+
+    <section class="card">
+      <h2>第五步：装 Docker，起三个依赖</h2>
+      <p>安装 Docker Desktop 并启用 WSL2 后端。在项目根目录执行 docker compose up -d。</p>
+      <p><strong>验证点</strong>：docker compose ps 三个容器都是 healthy。MySQL 首次启动要跑初始化脚本，等 health 变绿是正常的。</p>
+      <p>卡住怎么办：起不来先看日志 docker compose logs mysql，端口被占用就在 compose.yaml 改宿主机端口映射。</p>
+    </section>
+
+    <section class="card">
+      <h2>第六步：启动应用，验证三库</h2>
+      <p>cd backend 后执行 ./mvnw spring-boot:run，看到 Tomcat started on port 8080。浏览器开 http://localhost:8080/actuator/health。</p>
+      <p><strong>验证点</strong>：health 返回 status UP。再用 DBeaver 连 localhost:3306，看到 iam / content / learning 三库，iam 里有 flyway_schema_history。</p>
+      <p>卡住怎么办：连接失败先看 MySQL 容器日志，确认密码和 iam 库存在。</p>
+    </section>
+
+    <section class="card">
+      <h2>第七步：提交 git，收尾</h2>
+      <p>git add -A，git commit，确认工作树干净。全部验证点重新过一遍。</p>
+      <p><strong>验证点</strong>：git log 能看到你的提交，git status 干净。</p>
+    </section>
+
+    <section class="card">
+      <h2>地图使用三原则</h2>
+      <ol>
+        <li>验证点优先：代码写多少都算不了完成，验证点出现才算。</li>
+        <li>卡住先查速查：<a href="../reference/手搓工程速查.html">手搓速查</a> 里有常见问题和解法，查完再问老师。</li>
+        <li>环境装到需要时：头两步不需要装任何东西，第一个小胜利来得越早越好。</li>
+      </ol>
+    </section>
+
+    <section class="card scenario">
+      <h2>回忆点：三连问</h2>
+
+      <div class="quiz" data-good="判断正确：建目录骨架是第一步，零依赖，先获得掌控感。" data-bad="再想一步：装 JDK 是第三步，头两步都不需要它。">
+        <p>问题一：手搓工程骨架，你动手的第一个动作是什么？</p>
+        <button type="button" data-answer="wrong">安装 JDK 21 和 Docker Desktop</button>
+        <button type="button" data-answer="right">建目录骨架（mkdir）</button>
+        <button type="button" data-answer="wrong">执行 mvnw validate</button>
+        <p class="feedback" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="quiz" data-good="判断正确：BUILD SUCCESS 就是第一声通了。" data-bad="再想一步：validate 输出以 BUILD SUCCESS 结尾才算过。">
+        <p>问题二：第三步 mvn validate 的验证点是什么？</p>
+        <button type="button" data-answer="right">输出以 BUILD SUCCESS 结束</button>
+        <button type="button" data-answer="wrong">没有报错就够，任何输出都算</button>
+        <button type="button" data-answer="wrong">下载依赖完成即可</button>
+        <p class="feedback" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="quiz" data-good="判断正确：JDBC URL 指向 iam，content 和 learning 用全限定表名访问。" data-bad="再想一步：回想 0002 课，应用只连一个库，其余靠全限定表名。">
+        <p>问题三：application.yml 里 JDBC URL 指向哪个库？</p>
+        <button type="button" data-answer="wrong">learning</button>
+        <button type="button" data-answer="right">iam</button>
+        <button type="button" data-answer="wrong">content</button>
+        <p class="feedback" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>主资源推荐</h2>
+      <p>官方工具 <a href="https://start.spring.io" rel="noreferrer">Spring Initializr</a> 是主流生成路径，对照本课手写路径理解它的产出；<a href="https://docs.spring.io/spring-boot/reference/" rel="noreferrer">Spring Boot 官方文档</a> 是配置和启动细节的第一现场。</p>
+    </section>
+
+    <section class="card">
+      <h2>下一步</h2>
+      <p>从第一步开始走，每步停一次，验证点没出现就带着现象来问我。路线图任何时候记不清，回来看本课或<a href="../reference/手搓工程速查.html">速查表</a>。</p>
+    </section>
+  </main>
+</body>
+</html>

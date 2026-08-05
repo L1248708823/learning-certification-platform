@@ -4,6 +4,14 @@
 
 - [Spring Boot Reference Documentation](https://docs.spring.io/spring-boot/reference/)
   用于确认 Spring Boot 的配置、Web、测试和生产特性，技术票据需要 Spring Boot 事实时优先查阅。
+- [Spring Initializr](https://start.spring.io)
+  官方工程生成器，用于对照手写路径理解生成骨架，也是主流创建方式的第一现场。
+- [Maven Documentation](https://maven.apache.org/guides/)
+  用于理解构建生命周期、依赖管理与 Maven Wrapper。
+- [Flyway Documentation](https://documentation.red-gate.com/flyway)
+  用于确认迁移脚本命名、版本管理与 MySQL 方言支持边界。
+- [Docker Compose Documentation](https://docs.docker.com/compose/)
+  用于确认 Compose 文件语法、健康检查与初始化挂载的写法。
 - [MyBatis 3 Documentation](https://mybatis.org/mybatis-3/)
   用于理解 Mapper、XML 映射、动态 SQL 和核心执行模型，比较持久化方案时作为基础资料。
 - [React Learn](https://react.dev/learn)

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>手搓工程速查</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">REFERENCE</p>
+    <h1>手搓工程速查</h1>
+    <p class="lead">从零到首期验收的命令、验证点和常见问题，配合第四课使用。</p>
+
+    <section class="card">
+      <h2>命令速查</h2>
+      <table>
+        <tr><th>步骤</th><th>命令</th><th>预期输出关键词</th></tr>
+        <tr><td>建目录</td><td>mkdir -p backend/src/main/java/com/learningplatform（含 resources、test、deploy/mysql/init）</td><td>ls 看到目录</td></tr>
+        <tr><td>验证 pom</td><td>cd backend && ./mvnw validate</td><td>BUILD SUCCESS</td></tr>
+        <tr><td>冒烟测试</td><td>./mvnw test</td><td>Tests run: 1, Failures: 0</td></tr>
+        <tr><td>起依赖</td><td>仓库根目录 docker compose up -d</td><td>Started 三个容器</td></tr>
+        <tr><td>看依赖状态</td><td>docker compose ps</td><td>mysql / redis / minio 都 healthy</td></tr>
+        <tr><td>启动应用</td><td>cd backend && ./mvnw spring-boot:run</td><td>Tomcat started on port 8080</td></tr>
+        <tr><td>健康检查</td><td>curl http://localhost:8080/actuator/health</td><td>{"status":"UP"}</td></tr>
+        <tr><td>提交</td><td>git add -A && git commit</td><td>git status 干净</td></tr>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>文件职责速查</h2>
+      <table>
+        <tr><th>文件</th><th>一句话职责</th></tr>
+        <tr><td>compose.yaml</td><td>三个基础依赖（MySQL / Redis / MinIO），健康检查 + 数据卷</td></tr>
+        <tr><td>deploy/mysql/init/01-create-databases.sql</td><td>首次初始化建三库</td></tr>
+        <tr><td>backend/pom.xml</td><td>依赖声明与版本事实（parent 3.5.16、Java 21）</td></tr>
+        <tr><td>LearningPlatformApplication.java</td><td>应用入口</td></tr>
+        <tr><td>application.yml</td><td>数据源指 iam、Flyway 开关、Actuator 暴露范围</td></tr>
+        <tr><td>logback-spring.xml</td><td>日志格式与滚动策略</td></tr>
+        <tr><td>db/migration/V1__baseline.sql</td><td>Flyway 基线迁移</td></tr>
+        <tr><td>LearningPlatformApplicationTests.java</td><td>冒烟测试，不需要 Docker 也能跑</td></tr>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>常见问题</h2>
+      <table>
+        <tr><th>现象</th><th>原因</th><th>解法</th></tr>
+        <tr><td>java -version 还是 17</td><td>JAVA_HOME 未生效</td><td>新开终端；确认环境变量指向 JDK 21 目录</td></tr>
+        <tr><td>compose 起不来</td><td>端口被占用或镜像拉取慢</td><td>docker compose logs 看原因；改 compose 端口映射；配置镜像加速</td></tr>
+        <tr><td>MySQL 容器反复重启</td><td>初始化脚本报错或数据卷残留</td><td>docker compose logs mysql；docker compose down -v 清数据卷重来</td></tr>
+        <tr><td>应用启动连不上数据库</td><td>MySQL 未健康或密码不符</td><td>先 docker compose ps 确认 healthy，再核对 application.yml 密码</td></tr>
+        <tr><td>health 返回 DOWN</td><td>数据库连接问题</td><td>打开 show-details 查看 db 组件详情，或看应用日志堆栈</td></tr>
+        <tr><td>mvn test 失败</td><td>类名、配置键拼错</td><td>看堆栈第一行，对照速查表文件职责</td></tr>
+      </table>
+    </section>
+
+    <p class="backlink"><a href="../lessons/0004-手搓路线图.html">返回第四课：手搓路线图</a></p>
+  </main>
+</body>
+</html>
