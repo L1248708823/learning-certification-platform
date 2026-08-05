@@ -7,6 +7,8 @@ services:
   mysql:
     image: mysql:8.4
     container_name: lp-mysql
+    # 云服务器场景：宿主机重启后容器自动拉起
+    restart: unless-stopped
     environment:
       # 本地开发账号，生产环境必须改为独立低权限账号
       MYSQL_ROOT_PASSWORD: root
@@ -31,6 +33,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: lp-redis
+    restart: unless-stopped
     ports:
       - "127.0.0.1:6379:6379"
     volumes:
@@ -45,6 +48,7 @@ services:
     # 钉版本保证可复现，升级时显式改版本号
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z
     container_name: lp-minio
+    restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
       # 本地开发账号，控制台与 SDK 都用它
