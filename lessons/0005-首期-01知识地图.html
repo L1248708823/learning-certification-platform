@@ -25,41 +25,59 @@
     <section class="card">
       <h2>构建：Maven</h2>
       <p>它在 Java 世界的角色就是你熟悉的 npm，pom.xml 就是 package.json。现在要懂三个概念：坐标（groupId / artifactId / version 三件套）、依赖声明、Maven Wrapper（固定 Maven 版本，团队和 CI 用同一个）。后面票据再学：生命周期细节、依赖 scope 的差异。</p>
+      <p>官方链接：<a href="https://maven.apache.org/guides/" rel="noreferrer">Maven 官方指南</a>、<a href="https://docs.spring.io/spring-boot/maven-plugin/" rel="noreferrer">Spring Boot Maven 插件</a>。</p>
     </section>
 
     <section class="card">
       <h2>语言与运行时：Java 21</h2>
       <p>现在要懂：JDK 是编译器加运行时，JAVA_HOME 决定命令行用哪个 JDK，程序从 main 方法开始跑。你不需要懂语言语法细节，后续写业务代码时自然会学。后面票据再学：虚拟线程、集合新特性。</p>
+      <p>官方链接：<a href="https://dev.java/learn/" rel="noreferrer">Oracle Java 学习路径</a>、<a href="https://docs.oracle.com/en/java/javase/21/" rel="noreferrer">Java 21 官方文档</a>。</p>
     </section>
 
     <section class="card">
       <h2>框架：Spring Boot</h2>
       <p>现在要懂三个概念：starter（一包到位，相当于预装好的一组 npm 依赖）、自动配置（依赖在手，配置自动生成）、Actuator（健康检查端点，验证应用活着）。主类上的 @SpringBootApplication 记住"它是入口兼配置开关"就行。后面票据再学：Spring MVC 控制器、依赖注入、Spring Security。</p>
+      <p>官方链接：<a href="https://docs.spring.io/spring-boot/reference/getting-started.html" rel="noreferrer">Spring Boot 入门</a>、<a href="https://docs.spring.io/spring-boot/reference/actuator/" rel="noreferrer">Actuator 章节</a>。</p>
     </section>
 
     <section class="card">
       <h2>数据库版本控制：Flyway</h2>
       <p>现在要懂：迁移脚本是数据库的 git（理由见学习记录 0002）、flyway_schema_history 是已执行记录表、V1 基线是空迁移、三库由 Compose 建而表由迁移脚本建。后面票据再学：ALTER TABLE 类迁移、baseline 衔接、校验失败的处理。</p>
+      <p>官方链接：<a href="https://documentation.red-gate.com/flyway" rel="noreferrer">Flyway 官方文档</a>。</p>
     </section>
 
     <section class="card">
       <h2>容器：Docker 与 Compose</h2>
-      <p>现在要懂：容器是打包好的运行环境，解决"你机器能跑我机器跑不了"；镜像是一份只读模板，容器是它的一个运行实例；Compose 用 YAML 一次性编排多个容器，本项目的 MySQL / Redis / MinIO 都在里面。为什么应用本体不打包进 Compose，是教学决定，见调研文档验证清单。后面票据再学：Dockerfile、镜像构建、多阶段构建。</p>
+      <p>现在要懂：容器是打包好的运行环境，解决"你机器能跑我机器跑不了"；镜像是一份只读模板，容器是它的一个运行实例；Compose 用 YAML 一次性编排多个容器，本项目的 MySQL / Redis / MinIO 都在里面。为什么应用本体不打包进 Compose，是教学决定，见调研文档验证清单。为什么本地开发用容器而不是直接装服务，见本课"为什么本地用 Docker"卡。后面票据再学：Dockerfile、镜像构建、多阶段构建。</p>
+      <p>官方链接：<a href="https://docs.docker.com/get-started/" rel="noreferrer">Docker 入门</a>、<a href="https://docs.docker.com/compose/" rel="noreferrer">Compose 文档</a>。</p>
     </section>
 
     <section class="card">
       <h2>日志：SLF4J + Logback</h2>
-      <p>现在要懂：日志级别（INFO 是常规、ERROR 是出错）、pattern 是每行日志的格式模板、滚动文件防止日志无限膨胀。后面票据再学：链路追踪日志、结构化日志。</p>
+      <p>现在要懂：日志级别（INFO 是常规、ERROR 是出错）、pattern 是每行日志的格式模板、滚动文件防止日志无限膨胀。你看到的 logback-spring.xml 是标准模板，怎么来的见本课"新手怎么写出配置"卡。后面票据再学：链路追踪日志、结构化日志。</p>
+      <p>官方链接：<a href="https://docs.spring.io/spring-boot/reference/features/logging.html" rel="noreferrer">Spring Boot 日志章节</a>、<a href="https://logback.qos.ch/manual/configuration.html" rel="noreferrer">Logback 配置手册</a>。</p>
     </section>
 
     <section class="card">
       <h2>测试：这个项目怎么测</h2>
       <p>现在要懂：冒烟测试（上下文能组装起来就通过）、它故意不需要 Docker（排除数据源自动配置）。后面票据再学（重点预告）：单元测试 JUnit 5、Mockito 打桩、AssertJ 断言、Testcontainers 起真容器做集成测试、TDD 先写测试再写实现，这些从首期-02 开始逐个出现。</p>
+      <p>官方链接：<a href="https://junit.org/junit5/docs/current/user-guide/" rel="noreferrer">JUnit 5 用户指南</a>、<a href="https://testcontainers.com/guides/" rel="noreferrer">Testcontainers 指南</a>。</p>
     </section>
 
     <section class="card">
       <h2>工程与配置：杂项</h2>
       <p>现在要懂：application.yml 是配置中心、端口冲突怎么查、.gitignore 和 .gitattributes 管什么。后面票据再学：多环境 profile、配置加密、配置中心（那是微服务阶段的事）。</p>
+      <p>官方链接：<a href="https://git-scm.com/doc" rel="noreferrer">Git 官方文档</a>。</p>
+    </section>
+
+    <section class="card">
+      <h2>为什么本地开发用 Docker</h2>
+      <p>隔离：MySQL、Redis、MinIO 装在容器里不污染 Windows 环境，卸载就是删容器删卷，干净利落。一致：团队所有人、CI 用同一个镜像版本，消灭"我本地没问题啊"。可重置：数据卷删掉环境回到初始状态，学习期随便折腾。可切换：换 MySQL 版本只改一行镜像号。另一个现实理由：Redis 在 Windows 上没有官方版，MinIO 和 MySQL 装成 Windows 服务都要注册后台服务，容器化反而是最省事的路。最后是为后续铺路：Testcontainers 集成测试（首期-02 起）就基于 Docker。</p>
+    </section>
+
+    <section class="card">
+      <h2>新手怎么写出这些配置</h2>
+      <p>答案是三个字：抄模板。logback-spring.xml 是 Logback 官方格式，Spring Boot 会优先加载它，项目里这份是标准模板加中文注释，每个标签都能解释就学会了。配置属性名来自 Spring Boot 官方配置清单，IDEA 里打字有补全提示。compose.yaml 来自 Compose 官方示例。真实世界的新手流程是：先用零配置跑起来，需要文件日志时再去官方文档抄标准结构改改。抄完能解释，就是学会，别指望自己发明配置，谁都不发明。</p>
     </section>
 
     <section class="card">

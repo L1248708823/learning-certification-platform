@@ -8,10 +8,30 @@
   官方工程生成器，用于对照手写路径理解生成骨架，也是主流创建方式的第一现场。
 - [Maven Documentation](https://maven.apache.org/guides/)
   用于理解构建生命周期、依赖管理与 Maven Wrapper。
+- [Oracle Java Learning Path](https://dev.java/learn/)
+  用于 Java 语言基础的系统学习路径，配合 Java 21 官方文档使用。
+- [Java 21 Documentation](https://docs.oracle.com/en/java/javase/21/)
+  用于确认 Java 21 语法与运行时事实。
+- [Spring Boot Getting Started](https://docs.spring.io/spring-boot/reference/getting-started.html)
+  官方入门路径，理解 starter、自动配置和第一个应用。
+- [Spring Boot Logging](https://docs.spring.io/spring-boot/reference/features/logging.html)
+  日志章节，logback-spring.xml 标准写法的第一现场。
+- [Spring Boot Actuator](https://docs.spring.io/spring-boot/reference/actuator/)
+  健康检查与监控端点的官方说明。
+- [Logback Configuration Manual](https://logback.qos.ch/manual/configuration.html)
+  Logback 配置手册，pattern 与 appender 语法查这里。
 - [Flyway Documentation](https://documentation.red-gate.com/flyway)
   用于确认迁移脚本命名、版本管理与 MySQL 方言支持边界。
+- [Docker Get Started](https://docs.docker.com/get-started/)
+  容器概念入门，镜像与容器的官方解释。
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
   用于确认 Compose 文件语法、健康检查与初始化挂载的写法。
+- [JUnit 5 User Guide](https://junit.org/junit5/docs/current/user-guide/)
+  JUnit 5 官方用户指南，从首期-02 起使用。
+- [Testcontainers Guides](https://testcontainers.com/guides/)
+  Testcontainers 官方指南，从首期-02 起使用。
+- [Git Documentation](https://git-scm.com/doc)
+  Git 官方文档，配合仓库协作与 .gitattributes 使用。
 - [MyBatis 3 Documentation](https://mybatis.org/mybatis-3/)
   用于理解 Mapper、XML 映射、动态 SQL 和核心执行模型，比较持久化方案时作为基础资料。
 - [React Learn](https://react.dev/learn)
