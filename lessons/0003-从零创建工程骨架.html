@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第三课：从零创建工程骨架</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">LESSON 0003</p>
+    <h1>从零创建工程骨架</h1>
+    <p class="lead">还原首期-01 创建项目的完整动作链，分清哪些是工具按部就班生成的，哪些是需要自己一行行手写的。</p>
+
+    <section class="card">
+      <h2>本课目标</h2>
+      <p>完成本课后，你应该能说出这个后端工程每一个文件的来历，也能自己从零搭一个同款骨架：知道哪些命令可以交给工具，哪些内容必须自己决定。</p>
+    </section>
+
+    <section class="card">
+      <h2>两条创建路径</h2>
+      <p>候选方案两个。一个是 Spring Initializr（start.spring.io 网页或 IDEA 新建项目向导），选好版本和依赖，它把 pom、主类、配置文件、测试类一次性生成好；另一个是完全手写，一个文件一个文件地建。</p>
+      <p>主流做法是 Initializr 起步再手写补充，快而且不容易漏。本项目实际走的是完全手写，原因是本次在命令行环境里操作，而且每个文件都带教学注释，手写本身就成了学习材料。两条路径到达的终点相同，差别在过程。你以后自己搭项目，用 Initializr 更快，但希望你能看懂生成出来的每一行。</p>
+    </section>
+
+    <section class="card">
+      <h2>按部就班生成的部分</h2>
+      <ol>
+        <li><strong>版本事实</strong>：Spring Boot 用哪个版本、Flyway 和 MySQL 驱动被托管到什么版本，这些从 Maven Central 的 maven-metadata.xml 和官方文档查出来，是查证步骤，工具和人都要按这个来。</li>
+        <li><strong>Maven Wrapper</strong>：一条命令 mvn wrapper:wrapper 生成 mvnw、mvnw.cmd 和 .mvn/wrapper/maven-wrapper.properties，内容是工具决定的，不用人写。</li>
+        <li><strong>依赖下载</strong>：mvn validate 时 Maven 按 pom 声明去中央仓库拉 parent 和依赖，也是自动化。</li>
+      </ol>
+      <p>如果走 Initializr 路径，主类、application.properties、测试类也会由生成器产出，这部分就属于生成而非手写。</p>
+    </section>
+
+    <section class="card">
+      <h2>自己手写的部分</h2>
+      <p>工具能生成骨架，但生成不了决策。这些文件全部手写：</p>
+      <ol>
+        <li><strong>pom.xml</strong>：选哪些 starter、要不要 flyway-mysql、注释怎么写，是技术决策。</li>
+        <li><strong>application.yml</strong>：数据源指向 iam、Flyway 开关、Actuator 只暴露 health 和 info，是配置决策。</li>
+        <li><strong>V1__baseline.sql</strong>：基线语义写在迁移脚本注释里。</li>
+        <li><strong>logback-spring.xml</strong>：输出格式、滚动策略。</li>
+        <li><strong>compose.yaml 和 deploy/</strong>：工具没有这个，三库拆分、健康检查、钉镜像版本全是自己定。</li>
+        <li><strong>.gitattributes</strong>：行尾策略，工程规范。</li>
+        <li><strong>测试类</strong>：排除数据源自动配置的写法来自对 Boot 自动配置机制的理解。</li>
+        <li><strong>文档</strong>：ADR 0007、本课、调研 Amendment，都是人写的。</li>
+      </ol>
+      <p>判断标准一句话：这个文件的内容是事实还是决策？版本号、托管依赖是事实，查来就行；依赖选型、配置含义、边界约定是决策，必须自己定。</p>
+    </section>
+
+    <section class="card">
+      <h2>完整动作序列</h2>
+      <ol>
+        <li>查版本事实（Maven Central、官方文档），确定 Boot 3.5.16、Java 21。</li>
+        <li>建目录：backend/、deploy/mysql/init/，写 .gitignore 和 .gitattributes。</li>
+        <li>手写 pom.xml，mvn validate 验证能解析。</li>
+        <li>手写主类、application.yml、logback-spring.xml、V1__baseline.sql、测试类。</li>
+        <li>mvn wrapper:wrapper 生成 Maven Wrapper。</li>
+        <li>手写 compose.yaml 与建库脚本，用 Python 校验 YAML 语法。</li>
+        <li>写 ADR 与教学文档，code-review 两轴审查，修复发现的问题。</li>
+        <li>提交，在票据上留验证清单等人工验证。</li>
+      </ol>
+      <p>其中第 1、3、5 步在常规流程里会被 Spring Initializr 合并成一步，其余步骤无论哪条路径都一样。</p>
+    </section>
+
+    <section class="card scenario">
+      <h2>练习：判断哪个说法正确</h2>
+      <p>你明天要自己新起一个 Spring Boot 项目，最符合本课结论的做法是？</p>
+      <button type="button" data-answer="wrong">打开文档，从零手写 pom 和所有配置，绝不使用任何生成器。</button>
+      <button type="button" data-answer="right">用 Spring Initializr 生成骨架，然后逐行读懂生成结果，把业务决策和教学注释自己补上。</button>
+      <button type="button" data-answer="wrong">让生成器全自动产出，生成什么用什么，不用看内容。</button>
+      <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>继续阅读与练习</h2>
+      <p>骨架结构和运行方式看 <a href="../lessons/0002-工程骨架与本地运行.html">第二课</a>，结构决策看 <a href="../docs/adr/0007-maven-single-module-packages.md">ADR 0007</a>，版本事实的查证方法可以对照 <a href="../docs/research/单体阶段技术栈基线调研.md">技术栈基线调研</a>。</p>
+      <p>下一步学习：首期-02（API 契约基础）会引入 ApiResponse 和全局异常处理，那是第一个有业务逻辑的票据，你可以观察同样的流程：查事实、写代码、测试、记录决策。</p>
+    </section>
+  </main>
+
+  <script>
+    const feedback = document.querySelector('#feedback');
+    document.querySelectorAll('[data-answer]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const correct = button.dataset.answer === 'right';
+        feedback.textContent = correct
+          ? '判断正确：生成器负责骨架和事实，你负责读懂的决策，两条路径最终都要落到自己的判断上。'
+          : '再想一步：完全手写牺牲效率，全自动又丢掉理解，中间路线才符合这个项目的学习方式。';
+        feedback.className = `feedback ${correct ? 'good' : 'bad'}`;
+      });
+    });
+  </script>
+</body>
+</html>
