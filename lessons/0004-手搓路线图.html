@@ -71,6 +71,14 @@ mkdir -p deploy/mysql/init</pre>
     </section>
 
     <section class="card">
+      <h2>第五步变体：Docker 装在服务器上</h2>
+      <p>如果你有云服务器，本机可以完全不装 Docker。架构：服务器跑 Compose，端口只绑服务器本机地址（compose.yaml 已按此配置），本机用 SSH 隧道把 3306 映射到本地，应用配置不用改。</p>
+      <p>服务器端：装 Docker（发行版包管理器或 get.docker.com），git clone 仓库，根目录 docker compose up -d。本机端：验证 ssh 能连，然后执行 ssh -L 3306:127.0.0.1:3306 用户@服务器 -N 保持窗口开着（隧道建立后应用照常连 localhost）。</p>
+      <p><strong>验证点</strong>：服务器上 docker compose ps 三个 healthy；本机隧道窗口开着时，用 DBeaver 连 localhost:3306 能看到三库。</p>
+      <p>注意：服务器安全组只需开放 SSH 端口；Redis 和 MinIO 的隧道到对应票据用到时再开。本机不用装 Docker，Testcontainers 阶段（首期-02 起）通过 DOCKER_HOST=ssh://用户@服务器 连远程容器。</p>
+    </section>
+
+    <section class="card">
       <h2>第六步：启动应用，验证三库</h2>
       <p>cd backend 后执行 ./mvnw spring-boot:run，看到 Tomcat started on port 8080。浏览器开 http://localhost:8080/actuator/health。</p>
       <p><strong>验证点</strong>：health 返回 status UP。再用 DBeaver 连 localhost:3306，看到 iam / content / learning 三库，iam 里有 flyway_schema_history。</p>

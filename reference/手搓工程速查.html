@@ -43,6 +43,20 @@
     </section>
 
     <section class="card">
+      <h2>远程服务器变体（本机不装 Docker）</h2>
+      <table>
+        <tr><th>动作</th><th>命令</th><th>说明</th></tr>
+        <tr><td>服务器装 Docker</td><td>发行版包管理器，或 curl -fsSL https://get.docker.com | sh</td><td>加 compose 插件，启用服务</td></tr>
+        <tr><td>服务器拉代码</td><td>git clone 仓库，cd 到根目录</td><td>compose.yaml 和 deploy/ 都在仓库里</td></tr>
+        <tr><td>服务器起依赖</td><td>docker compose up -d</td><td>端口只绑 127.0.0.1，公网不可见</td></tr>
+        <tr><td>本机建隧道</td><td>ssh -L 3306:127.0.0.1:3306 用户@服务器 -N</td><td>窗口保持开着，应用照常连 localhost</td></tr>
+        <tr><td>验证</td><td>本机 DBeaver 连 localhost:3306</td><td>看到三库即隧道通</td></tr>
+        <tr><td>后续集成测试</td><td>DOCKER_HOST=ssh://用户@服务器</td><td>Testcontainers 起远程容器，首期-02 起</td></tr>
+      </table>
+      <p>安全要点：安全组只开 SSH；Redis / MinIO 的隧道用到时再开；服务器上不要裸开 2375 远程 API 端口。</p>
+    </section>
+
+    <section class="card">
       <h2>常见问题</h2>
       <table>
         <tr><th>现象</th><th>原因</th><th>解法</th></tr>

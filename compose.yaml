@@ -15,7 +15,8 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_0900_ai_ci
     ports:
-      - "3306:3306"
+      # 只绑定本机地址：本地开发照常连接，服务器场景公网不可见（经 SSH 隧道访问）
+      - "127.0.0.1:3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
       # 首次初始化执行建库脚本，创建 iam / content / learning 三个库
@@ -31,7 +32,7 @@ services:
     image: redis:7-alpine
     container_name: lp-redis
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis-data:/data
     healthcheck:
@@ -50,8 +51,8 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     ports:
-      - "9000:9000"   # S3 API
-      - "9001:9001"   # 管理控制台
+      - "127.0.0.1:9000:9000"   # S3 API
+      - "127.0.0.1:9001:9001"   # 管理控制台
     volumes:
       - minio-data:/data
     healthcheck:
