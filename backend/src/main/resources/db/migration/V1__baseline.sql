@@ -1,0 +1,8 @@
+-- V1 基线迁移。
+--
+-- 三个业务库（iam / content / learning）由 Docker Compose 初始化脚本创建，
+-- 见 deploy/mysql/init/01-create-databases.sql，本迁移只建立 Flyway 基线。
+--
+-- 后续业务表按模块落库，DDL 一律使用全限定表名：
+--   iam.user、content.course、learning.learning_eligibility ...
+-- Flyway 版本历史表 flyway_schema_history 自动创建在 JDBC 指向的 iam 库中。

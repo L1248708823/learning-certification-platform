@@ -1,2 +1,16 @@
+# 临时交接文档与草稿（AGENTS.md「Temporary files」约定）
 .tmp/
 .scratch/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Java / Maven
+backend/target/
+backend/logs/
+
+# Node / 前端（首期-08 引入后生效）
+node_modules/
+frontend/dist/

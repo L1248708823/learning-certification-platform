@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第二课：工程骨架与本地运行</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">LESSON 0002</p>
+    <h1>工程骨架与本地运行</h1>
+    <p class="lead">学会读懂并跑起项目的骨架：Monorepo 结构、Maven 单模块决策、Compose 基础依赖、Flyway 基线和健康检查。</p>
+
+    <section class="card">
+      <h2>本课目标</h2>
+      <p>完成本课后，你应该能独立把项目从零跑起来（Compose 起依赖、启动后端、看健康检查），并能解释骨架里每个部件的作用和为什么这样选。</p>
+    </section>
+
+    <section class="card">
+      <h2>骨架总览</h2>
+      <p>仓库根目录按技术栈组织，保持语言无关：</p>
+      <ol>
+        <li><strong>backend/</strong>：后端 Maven 工程，Spring Boot 3.5 + Java 21，单模块三个业务包（iam / content / learning）。</li>
+        <li><strong>frontend/</strong>：前端占位目录，React + TypeScript + Vite 在首期-08 引入。</li>
+        <li><strong>compose.yaml</strong>：本地基础依赖（MySQL 8 / Redis / MinIO），应用本体不进 Compose。</li>
+        <li><strong>deploy/</strong>：基础设施初始化脚本，建库脚本在这里。</li>
+        <li><strong>docs/、lessons/、learning-records/</strong>：决策、教学和学习记录。</li>
+      </ol>
+      <p>关键约定：跨模块禁止直接查表、禁止跨 schema join，数据访问一律走模块接口，这是 ADR 0006 从第一天维护的微服务纪律。</p>
+    </section>
+
+    <section class="card">
+      <h2>Maven 单模块 vs 多模块</h2>
+      <p>候选方案两个：拆多个 Maven artifact（多模块），或一个 pom 里用包名分层。主流的多模块方案用编译期强制边界，适合团队协作和独立部署；但本项目只有一个可部署单元（单数据源、单 Flyway 实例、单进程），多模块的部署隔离收益为零，反而多出 reactor、parent pom 一层构建概念。收敛结论记录在 ADR 0007：单模块 + 包分层，模块边界靠评审纪律，抽取微服务时再学多模块。</p>
+    </section>
+
+    <section class="card">
+      <h2>Compose 起三个基础依赖</h2>
+      <p>docker compose up -d 一条命令拉起 MySQL 8、Redis 7、MinIO，每个服务带健康检查和数据卷。MySQL 首次启动时执行 deploy/mysql/init/ 下的脚本，创建 iam / content / learning 三个库。应用连接的是 iam 库，content 和 learning 的表用全限定表名访问，Flyway 的版本历史表也落在 iam。</p>
+    </section>
+
+    <section class="card">
+      <h2>Flyway 基线</h2>
+      <p>backend/src/main/resources/db/migration/ 放版本化迁移脚本，V1 只建立基线（建库交给 Compose），后续票据的业务表从 V2 开始按模块追加。版本号全局递增，DDL 一律全限定表名。启动时 Flyway 自动比对已执行版本，多执行一次会直接报错，绝不静默重复，这是教学项目想要的确定性。</p>
+    </section>
+
+    <section class="card">
+      <h2>Actuator 健康检查</h2>
+      <p>spring-boot-starter-actuator 提供监控端点，application.yml 只暴露 health 和 info。启动后访问 http://localhost:8080/actuator/health 看到 {"status":"UP"} 就证明数据库连接、Flyway 迁移和应用组装全部就绪，这是本课票据（首期-01）的完成判定。</p>
+    </section>
+
+    <section class="card">
+      <h2>本地运行四步</h2>
+      <ol>
+        <li><strong>装环境</strong>：JDK 21（本机已有 17，两者共存，JAVA_HOME 指 21）、Docker Desktop（WSL2 后端）。</li>
+        <li><strong>起依赖</strong>：仓库根目录执行 docker compose up -d，等三个容器 health 变 healthy。</li>
+        <li><strong>启动后端</strong>：cd backend 后执行 ./mvnw spring-boot:run（首次会下载 Maven 发行版和依赖）。</li>
+        <li><strong>看健康检查</strong>：浏览器或 curl 访问 /actuator/health，状态为 UP 即完成。</li>
+      </ol>
+    </section>
+
+    <section class="card scenario">
+      <h2>练习：判断哪个说法正确</h2>
+      <p>后端想给课程加一张新表，迁移脚本应该怎么写？</p>
+      <button type="button" data-answer="wrong">在 compose.yaml 的 MySQL 初始化脚本里直接加 CREATE TABLE，和建库脚本放一起。</button>
+      <button type="button" data-answer="right">在 backend 的 db/migration/ 下新增 V2 版本脚本，用全限定表名（content.xxx）写 DDL。</button>
+      <button type="button" data-answer="wrong">为了快，直接手动连数据库建表，不写迁移脚本。</button>
+      <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>继续阅读与练习</h2>
+      <p>结构决策看 <a href="../docs/adr/0007-maven-single-module-packages.md">ADR 0007</a>，版本拍板记录在 <a href="../docs/research/单体阶段技术栈基线调研.md">技术栈基线调研</a> 的 Amendment 段，票据详情见 GitHub Issue #15。</p>
+      <p>下一步学习：首期-02（API 契约基础）会教统一响应结构 ApiResponse 和全局异常处理，那时候你会第一次真正写业务代码。</p>
+    </section>
+  </main>
+
+  <script>
+    const feedback = document.querySelector('#feedback');
+    document.querySelectorAll('[data-answer]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const correct = button.dataset.answer === 'right';
+        feedback.textContent = correct
+          ? '判断正确：业务表永远走 Flyway 迁移脚本，建库初始化脚本只负责库本身。'
+          : '再想一步：初始化脚本只在首次建库时执行，业务 DDL 必须进版本化迁移，全限定表名保证三个库各自归属。';
+        feedback.className = `feedback ${correct ? 'good' : 'bad'}`;
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+# 本地开发依赖：MySQL 8 / Redis / MinIO
+# 用法：docker compose up -d，然后在 backend/ 下启动后端应用。
+# 基础依赖与应用分离的约定见 docs/research/单体阶段技术栈基线调研.md 验证清单。
+name: learning-platform
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: lp-mysql
+    environment:
+      # 本地开发账号，生产环境必须改为独立低权限账号
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      # 首次初始化执行建库脚本，创建 iam / content / learning 三个库
+      - ./deploy/mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    container_name: lp-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    # 钉版本保证可复现，升级时显式改版本号
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    container_name: lp-minio
+    command: server /data --console-address ":9001"
+    environment:
+      # 本地开发账号，控制台与 SDK 都用它
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # 管理控制台
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  mysql-data:
+  redis-data:
+  minio-data:

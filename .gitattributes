@@ -1,0 +1,13 @@
+# 统一行尾：仓库内一律 LF，Windows 检出由 autocrlf 处理
+* text=auto
+
+# 代码与脚本固定 LF（跨平台一致，避免 Windows/CI 差异）
+*.java text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sql text eol=lf
+*.sh text eol=lf
+
+# Windows 批处理脚本必须 CRLF
+mvnw.cmd text eol=crlf
