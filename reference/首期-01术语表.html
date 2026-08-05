@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>首期-01 术语表</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">REFERENCE</p>
+    <h1>首期-01 术语表</h1>
+    <p class="lead">第一个票据涉及的全部术语，扫一遍给不懂的打勾，配合第五课使用。标注"后续"的现在不用学。</p>
+
+    <section class="card">
+      <h2>构建：Maven</h2>
+      <table>
+        <tr><th>术语</th><th>一句话解释</th><th>何时用</th></tr>
+        <tr><td>Maven</td><td>Java 世界的构建工具，相当于 npm 加构建脚本</td><td>本票据</td></tr>
+        <tr><td>pom.xml</td><td>项目配置文件，相当于 package.json</td><td>本票据</td></tr>
+        <tr><td>坐标</td><td>groupId / artifactId / version 三件套，唯一标识一个包</td><td>本票据</td></tr>
+        <tr><td>parent</td><td>继承父 pom，版本号等事实由 Spring Boot 统一托管</td><td>本票据</td></tr>
+        <tr><td>依赖声明</td><td>dependency 块声明要用的库，scope 控制使用范围</td><td>本票据</td></tr>
+        <tr><td>Maven Wrapper</td><td>mvnw 脚本，固定 Maven 版本，团队和 CI 用同一个</td><td>本票据</td></tr>
+        <tr><td>生命周期</td><td>validate 到 install 的阶段序列，validate 只校验 pom</td><td>本票据</td></tr>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>语言与运行时：Java</h2>
+      <table>
+        <tr><th>术语</th><th>一句话解释</th><th>何时用</th></tr>
+        <tr><td>JDK</td><td>Java 开发工具包，含编译器和运行时</td><td>本票据</td></tr>
+        <tr><td>JAVA_HOME</td><td>环境变量，决定命令行工具用哪个 JDK</td><td>本票据</td></tr>
+        <tr><td>main 方法</td><td>程序入口，JVM 从它开始执行</td><td>本票据</td></tr>
+        <tr><td>LTS</td><td>长期支持版本，Java 17 / 21 / 25 是近年三档</td><td>本票据</td></tr>
+        <tr><td>虚拟线程</td><td>Java 21 起的轻量级线程，高并发 IO 利器</td><td>后续</td></tr>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>框架：Spring Boot</h2>
+      <table>
+        <tr><th>术语</th><th>一句话解释</th><th>何时用</th></tr>
+        <tr><td>Spring Boot</td><td>让 Spring 应用快速启动的框架，约定大于配置</td><td>本票据</td></tr>
+        <tr><td>starter</td><td>一组预打包依赖，加一个就配好一类能力</td><td>本票据</td></tr>
+        <tr><td>自动配置</td><td>依赖在手，Spring 自动生成对应组件</td><td>本票据</td></tr>
+        <tr><td>@SpringBootApplication</td><td>主类注解，入口加配置开关</td><td>本票据</td></tr>
+        <tr><td>application.yml</td><td>集中配置：数据源、Flyway、Actuator 等</td><td>本票据</td></tr>
+        <tr><td>Actuator</td><td>监控端点模块，health 验证应用是否活着</td><td>本票据</td></tr>
+        <tr><td>内嵌服务器</td><td>Tomcat 打进应用里，无需单独装 Web 服务器</td><td>本票据</td></tr>
+        <tr><td>Spring MVC</td><td>Web 层框架，写接口的控制器就靠它</td><td>后续</td></tr>
+        <tr><td>依赖注入</td><td>Spring 管理对象创建与装配的机制</td><td>后续</td></tr>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>数据库版本控制：Flyway</h2>
+      <table>
+        <tr><th>术语</th><th>一句话解释</th><th>何时用</th></tr>
+        <tr><td>Flyway</td><td>数据库迁移工具，数据库的 git</td><td>本票据</td></tr>
+        <tr><td>迁移脚本</td><td>db/migration 下的版本化 SQL 文件，V1 起编号</td><td>本票据</td></tr>
+        <tr><td>flyway_schema_history</td><td>已执行迁移的记录表，落在 iam 库</td><td>本票据</td></tr>
+        <tr><td>基线</td><td>空迁移 V1，只建立版本控制起点</td><td>本票据</td></tr>
+        <tr><td>全限定表名</td><td>schema.表名 的写法，跨库访问的基础</td><td>本票据</td></tr>
+        <tr><td>schema</td><td>MySQL 里的逻辑库，本项目的模块边界</td><td>本票据</td></tr>
+        <tr><td>ALTER TABLE</td><td>改表结构的迁移，后续票据第一次遇到</td><td>后续</td></tr>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>容器：Docker 与 Compose</h2>
+      <table>
+        <tr><th>术语</th><th>一句话解释</th><th>何时用</th></tr>
+        <tr><td>Docker</td><td>容器技术，打包运行环境，解决环境不一致</td><td>本票据</td></tr>
+        <tr><td>镜像</td><td>只读模板，如 mysql:8.4</td><td>本票据</td></tr>
+        <tr><td>容器</td><td>镜像的一个运行实例，起停互不影响</td><td>本票据</td></tr>
+        <tr><td>Docker Desktop</td><td>Windows / Mac 上运行 Docker 的桌面应用</td><td>本票据</td></tr>
+        <tr><td>Compose</td><td>YAML 编排多个容器，一条命令全起</td><td>本票据</td></tr>
+        <tr><td>healthcheck</td><td>容器内自检命令，Compose 据此报告健康状态</td><td>本票据</td></tr>
+        <tr><td>卷 volume</td><td>容器外的持久化存储，容器删了数据还在</td><td>本票据</td></tr>
+        <tr><td>init 脚本</td><td>MySQL 容器首次启动自动执行的建库脚本</td><td>本票据</td></tr>
+        <tr><td>Dockerfile</td><td>描述镜像怎么构建的文件</td><td>后续</td></tr>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>日志与测试</h2>
+      <table>
+        <tr><th>术语</th><th>一句话解释</th><th>何时用</th></tr>
+        <tr><td>SLF4J</td><td>日志门面，代码只认它，实现可换</td><td>本票据</td></tr>
+        <tr><td>Logback</td><td>实际输出日志的实现，负责格式和落盘</td><td>本票据</td></tr>
+        <tr><td>日志级别</td><td>TRACE 到 ERROR 的阶梯，INFO 是常规，ERROR 是出错</td><td>本票据</td></tr>
+        <tr><td>滚动文件</td><td>日志按天和大小切文件，防止无限膨胀</td><td>本票据</td></tr>
+        <tr><td>冒烟测试</td><td>上下文能组装起来就通过的测试</td><td>本票据</td></tr>
+        <tr><td>JUnit 5</td><td>Java 单元测试框架</td><td>后续</td></tr>
+        <tr><td>Mockito</td><td>测试打桩工具，模拟依赖行为</td><td>后续</td></tr>
+        <tr><td>AssertJ</td><td>断言库，让断言可读</td><td>后续</td></tr>
+        <tr><td>Testcontainers</td><td>测试里起真容器的工具</td><td>后续</td></tr>
+        <tr><td>TDD</td><td>先写测试再写实现，红绿循环</td><td>后续</td></tr>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>工程与配置</h2>
+      <table>
+        <tr><th>术语</th><th>一句话解释</th><th>何时用</th></tr>
+        <tr><td>Monorepo</td><td>前后端加文档放一个仓库管理</td><td>本票据</td></tr>
+        <tr><td>模块化单体</td><td>一个进程三个业务包，边界按微服务纪律维护</td><td>本票据</td></tr>
+        <tr><td>数据源</td><td>应用连数据库的通道配置</td><td>本票据</td></tr>
+        <tr><td>JDBC URL</td><td>数据库连接串，本项目指向 iam</td><td>本票据</td></tr>
+        <tr><td>端口冲突</td><td>3306 / 8080 等被占用时应用或容器起不来</td><td>本票据</td></tr>
+        <tr><td>.gitignore</td><td>告诉 git 哪些文件不提交</td><td>本票据</td></tr>
+        <tr><td>.gitattributes</td><td>行尾与换行策略，跨平台一致</td><td>本票据</td></tr>
+        <tr><td>profile</td><td>环境配置切换（dev / prod）</td><td>后续</td></tr>
+      </table>
+    </section>
+
+    <p class="backlink"><a href="../lessons/0005-首期-01知识地图.html">返回第五课：首期-01 知识地图</a></p>
+  </main>
+</body>
+</html>

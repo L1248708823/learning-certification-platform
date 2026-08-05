@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第五课：首期-01 知识地图</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">LESSON 0005</p>
+    <h1>首期-01 知识地图</h1>
+    <p class="lead">第一个票据需要的全部知识，分组列全。目标是消灭"未知的未知"：把清单从头扫一遍，勾出你不懂的术语，每一项都能在速查表里找到一句话解释。</p>
+
+    <section class="card">
+      <h2>怎么用这张地图</h2>
+      <ol>
+        <li>打开 <a href="../reference/首期-01术语表.html">首期-01 术语表</a>，从头扫一遍，给不懂的术语打勾。</li>
+        <li>只学本课标"现在要懂"的，标"后面票据再学"的一个都别碰，那是以后的事。</li>
+        <li>每类最多抓三个核心概念，其余混个脸熟就行。</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>构建：Maven</h2>
+      <p>它在 Java 世界的角色就是你熟悉的 npm，pom.xml 就是 package.json。现在要懂三个概念：坐标（groupId / artifactId / version 三件套）、依赖声明、Maven Wrapper（固定 Maven 版本，团队和 CI 用同一个）。后面票据再学：生命周期细节、依赖 scope 的差异。</p>
+    </section>
+
+    <section class="card">
+      <h2>语言与运行时：Java 21</h2>
+      <p>现在要懂：JDK 是编译器加运行时，JAVA_HOME 决定命令行用哪个 JDK，程序从 main 方法开始跑。你不需要懂语言语法细节，后续写业务代码时自然会学。后面票据再学：虚拟线程、集合新特性。</p>
+    </section>
+
+    <section class="card">
+      <h2>框架：Spring Boot</h2>
+      <p>现在要懂三个概念：starter（一包到位，相当于预装好的一组 npm 依赖）、自动配置（依赖在手，配置自动生成）、Actuator（健康检查端点，验证应用活着）。主类上的 @SpringBootApplication 记住"它是入口兼配置开关"就行。后面票据再学：Spring MVC 控制器、依赖注入、Spring Security。</p>
+    </section>
+
+    <section class="card">
+      <h2>数据库版本控制：Flyway</h2>
+      <p>现在要懂：迁移脚本是数据库的 git（理由见学习记录 0002）、flyway_schema_history 是已执行记录表、V1 基线是空迁移、三库由 Compose 建而表由迁移脚本建。后面票据再学：ALTER TABLE 类迁移、baseline 衔接、校验失败的处理。</p>
+    </section>
+
+    <section class="card">
+      <h2>容器：Docker 与 Compose</h2>
+      <p>现在要懂：容器是打包好的运行环境，解决"你机器能跑我机器跑不了"；镜像是一份只读模板，容器是它的一个运行实例；Compose 用 YAML 一次性编排多个容器，本项目的 MySQL / Redis / MinIO 都在里面。为什么应用本体不打包进 Compose，是教学决定，见调研文档验证清单。后面票据再学：Dockerfile、镜像构建、多阶段构建。</p>
+    </section>
+
+    <section class="card">
+      <h2>日志：SLF4J + Logback</h2>
+      <p>现在要懂：日志级别（INFO 是常规、ERROR 是出错）、pattern 是每行日志的格式模板、滚动文件防止日志无限膨胀。后面票据再学：链路追踪日志、结构化日志。</p>
+    </section>
+
+    <section class="card">
+      <h2>测试：这个项目怎么测</h2>
+      <p>现在要懂：冒烟测试（上下文能组装起来就通过）、它故意不需要 Docker（排除数据源自动配置）。后面票据再学（重点预告）：单元测试 JUnit 5、Mockito 打桩、AssertJ 断言、Testcontainers 起真容器做集成测试、TDD 先写测试再写实现，这些从首期-02 开始逐个出现。</p>
+    </section>
+
+    <section class="card">
+      <h2>工程与配置：杂项</h2>
+      <p>现在要懂：application.yml 是配置中心、端口冲突怎么查、.gitignore 和 .gitattributes 管什么。后面票据再学：多环境 profile、配置加密、配置中心（那是微服务阶段的事）。</p>
+    </section>
+
+    <section class="card">
+      <h2>现在不用焦虑的清单</h2>
+      <p>以下全部是后面票据或后置能力的事，遇到名字不认识完全正常：Spring Security 和 OAuth2（首期-03）、Redis 用法（首期-03）、MyBatis 全家桶（首期-03 起）、Testcontainers 集成测试（首期-02 起）、MinIO 文件上传（首期-04）、React 前端（首期-08）、CI 流水线（首期-09）、微服务和 Kubernetes（后置能力，触发条件见 AGENTS.md）。</p>
+    </section>
+
+    <section class="card scenario">
+      <h2>回忆点：两问</h2>
+
+      <div class="quiz" data-good="判断正确：Maven 在 Java 世界就是 npm，pom.xml 对应 package.json。" data-bad="再想一步：React 是 UI 框架，浏览器是运行环境，都不承担依赖管理。">
+        <p>问题一：Maven 在你熟悉的前端世界里对应什么？</p>
+        <button type="button" data-answer="wrong">React</button>
+        <button type="button" data-answer="right">npm</button>
+        <button type="button" data-answer="wrong">浏览器</button>
+        <p class="feedback" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="quiz" data-good="判断正确：Testcontainers 从首期-02 起才出现，现在不用碰。" data-bad="再想一步：Flyway 基线和 Actuator 健康检查正是本票据的内容。">
+        <p>问题二：以下哪个是"后面票据再学"的？</p>
+        <button type="button" data-answer="right">Testcontainers 集成测试</button>
+        <button type="button" data-answer="wrong">Flyway V1 基线迁移</button>
+        <button type="button" data-answer="wrong">Actuator 健康检查</button>
+        <p class="feedback" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>主资源推荐</h2>
+      <p><a href="https://maven.apache.org/guides/" rel="noreferrer">Maven 官方指南</a> 讲透构建的每块拼图；<a href="https://docs.spring.io/spring-boot/reference/" rel="noreferrer">Spring Boot 官方文档</a> 是配置和启动事实的第一现场。术语逐条解释在 <a href="../reference/首期-01术语表.html">首期-01 术语表</a>。</p>
+    </section>
+
+    <section class="card">
+      <h2>下一步</h2>
+      <p>扫一遍术语表，把不懂的术语带过来问我，一次问三五个最有效。然后回到 <a href="../lessons/0004-手搓路线图.html">第四课</a> 走第一步。</p>
+    </section>
+  </main>
+</body>
+</html>
