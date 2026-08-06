@@ -138,24 +138,37 @@ docker ps -a --format 'table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}'
 
 ### 阶段 C：准备项目目录
 
-目的：让代码、配置、数据、日志和运行文件有清晰边界。
+目的：让代码、服务器配置、持久化数据、备份和运行文件有清晰边界。
 
-建议目录：
+代码和文档保留在项目目录，持久化数据不要放进 Git 工作区：
 
 ```text
 /srv/services/learning-certification-platform/
   backend/       代码
   frontend/      前端代码
-  config/        服务器配置，不放 Git 密钥
-  data/mysql/    MySQL 持久化数据
-  data/redis/    Redis 持久化数据
-  data/minio/    MinIO 持久化数据
-  logs/          应用或运维日志
-  run/           PID、socket 等运行文件
   docs/          项目和服务器文档
+
+/srv/data/learning-certification-platform/
+  mysql/         MySQL 持久化数据
+  redis/         Redis 持久化数据
+  minio/         MinIO 持久化数据
+
+/etc/learning-platform/
+  learning-platform.env  服务器密钥和环境配置
+
+/srv/backups/learning-certification-platform/
+  mysql/         MySQL 备份
+  minio/         MinIO 备份或导出记录
+
+/var/log/learning-platform/  应用和运维日志
+/run/learning-platform/      PID、socket 等运行文件
 ```
 
-配置文件权限建议为 `600`。真实密码不写进 Git、不写进教学文档、不放进镜像。
+Compose 使用环境变量或外部环境文件引用 `/srv/data/learning-certification-platform/`，不把服务器绝对路径和真实密码写死在仓库中。
+
+`/etc/learning-platform/learning-platform.env` 权限建议为 `600`。真实密码不写进 Git、不写进教学文档、不放进镜像。
+
+如果为了本地演示临时把数据放回项目目录，必须额外忽略 `/data/`、`/logs/`、`/run/` 和服务器环境文件；忽略规则不能替代密码管理。
 
 ### 阶段 D：建立独立 Compose
 
@@ -188,7 +201,7 @@ learning-platform-network
 ```bash
 docker compose -p learning-platform -f compose.server.yaml config
 ss -ltnp
-df -h /srv/services
+df -h /srv/data
 free -h
 ```
 
