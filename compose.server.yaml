@@ -1,0 +1,92 @@
+# 服务器专用基础设施 Compose。
+#
+# 与根目录 compose.yaml 的区别：
+# 1. 使用项目专属端口，避开服务器已有服务。
+# 2. 数据绑定到 /srv/data/...，不与 Git 工作区混在一起。
+# 3. 密码从 /etc/learning-platform/learning-platform.env 注入，不提交到仓库。
+# 4. 当前只运行基础设施，后端应用等业务代码形成后再加入。
+#
+# 启动方式：
+# docker compose --env-file /etc/learning-platform/learning-platform.env \
+#   -f compose.server.yaml -p learning-platform-server up -d
+
+name: learning-platform-server
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: lp-mysql
+    restart: unless-stopped
+    environment:
+      # root 只用于初始化和数据库维护，应用不要使用 root。
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
+      # 设置 iam 后，官方镜像会创建 lp_dev 用户；02-grant-lp-dev.sql 再补齐另外两个库的权限。
+      MYSQL_DATABASE: iam
+      MYSQL_USER: lp_dev
+      MYSQL_PASSWORD: "${MYSQL_APP_PASSWORD:?MYSQL_APP_PASSWORD is required}"
+      TZ: "${TZ:-Asia/Shanghai}"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    ports:
+      # 只监听服务器本机；本地电脑通过 SSH 隧道访问，不开放公网数据库端口。
+      - "127.0.0.1:${MYSQL_HOST_PORT:-13306}:3306"
+    volumes:
+      # 持久化数据在仓库外，删除容器不会删除数据；不要使用 down -v 随意清理。
+      - "${LP_DATA_ROOT:?LP_DATA_ROOT is required}/mysql:/var/lib/mysql"
+      # 初始化脚本只在这个数据目录第一次为空时执行。
+      - ./deploy/mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$${MYSQL_ROOT_PASSWORD}\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    container_name: lp-redis
+    restart: unless-stopped
+    # 让容器使用服务器 ubuntu 用户对应的 UID，便于绑定目录的权限管理。
+    user: "1000:1000"
+    environment:
+      # 健康检查使用同一个密码；真实值来自外部 env 文件。
+      REDIS_PASSWORD: "${REDIS_PASSWORD:?REDIS_PASSWORD is required}"
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --requirepass
+      - "${REDIS_PASSWORD:?REDIS_PASSWORD is required}"
+    ports:
+      - "127.0.0.1:${REDIS_HOST_PORT:-16379}:6379"
+    volumes:
+      - "${LP_DATA_ROOT:?LP_DATA_ROOT is required}/redis:/data"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$${REDIS_PASSWORD}\" ping | grep PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    # 固定版本，避免 latest 在不同时间拉到不同内容。
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    container_name: lp-minio
+    restart: unless-stopped
+    # MinIO 数据目录使用外置绑定目录，使用 ubuntu UID 避免写入权限混乱。
+    user: "1000:1000"
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}"
+      MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}"
+      TZ: "${TZ:-Asia/Shanghai}"
+    ports:
+      - "127.0.0.1:${MINIO_API_HOST_PORT:-19000}:9000"
+      - "127.0.0.1:${MINIO_CONSOLE_HOST_PORT:-19001}:9001"
+    volumes:
+      - "${LP_DATA_ROOT:?LP_DATA_ROOT is required}/minio:/data"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 10

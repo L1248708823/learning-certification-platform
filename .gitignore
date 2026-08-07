@@ -2,6 +2,11 @@
 .tmp/
 .scratch/
 
+# 本地环境变量和密钥；示例文件可以提交，真实值不能提交
+.env
+.env.*
+!.env.example
+
 # IDE
 .idea/
 *.iml
