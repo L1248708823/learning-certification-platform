@@ -16,6 +16,9 @@
 backend/target/
 backend/logs/
 
+# 根目录运行日志（从根目录启动时 logback 相对路径写到这）
+logs/
+
 # Node / 前端（首期-08 引入后生效）
 node_modules/
 frontend/dist/
