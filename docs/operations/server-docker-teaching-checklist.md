@@ -492,6 +492,15 @@ ssh -v -o ConnectTimeout=10 ubuntu@<服务器SSH地址>
 
 只有 SSH 单独登录成功后，再追加 `-L` 隧道参数。不要为了绕过超时直接把数据库端口开放到公网。
 
+本次服务器 ED25519 主机指纹已在服务器端核对为：
+
+```text
+SHA256:uWdpemSzYPtGANjVGboMrnHLJ2nFZXBhEVvprMuZKE8
+```
+
+首次连接看到该指纹时，确认它与可信来源一致后输入 `yes`；它会保存到 Windows 的
+`%USERPROFILE%\\.ssh\\known_hosts`。主机指纹不是登录密码，而是用来识别“连接到的服务器是否还是同一台”。
+
 #### 尚未完成的服务器工作
 
 - 尚未创建正式备份并完成一次恢复演练。
