@@ -12,6 +12,9 @@
 *.iml
 .vscode/
 
+# Claude Code 本地权限配置；.claude/skills 等共享内容仍提交
+.claude/settings.local.json
+
 # Java / Maven
 backend/target/
 backend/logs/
