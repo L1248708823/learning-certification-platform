@@ -37,6 +37,12 @@
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
 
+    <!-- JDBC + 连接池（HikariCP）：提供 DataSource 自动配置，Flyway 迁移和健康检查的 db 组件都依赖它 -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+
     <!-- Flyway 数据库迁移，版本由 Boot 统一托管 -->
     <dependency>
       <groupId>org.flywaydb</groupId>
