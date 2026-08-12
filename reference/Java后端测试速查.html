@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java 后端测试速查</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">REFERENCE</p>
+    <h1>Java 后端测试速查</h1>
+    <p class="lead">先看被测范围和依赖边界，再给测试命名。文件放在 test 目录，只说明它是测试源码，不说明测试类型。</p>
+
+    <section class="card">
+      <h2>四个常用层次</h2>
+      <table>
+        <tr><th>术语</th><th>被测范围</th><th>典型工具</th><th>当前项目</th></tr>
+        <tr><td>纯单元测试</td><td>一个类或一个规则，依赖隔离</td><td>JUnit 5、Mockito、AssertJ</td><td>暂无</td></tr>
+        <tr><td>上下文测试</td><td>Spring Bean 能否组装和启动</td><td>@SpringBootTest</td><td>有</td></tr>
+        <tr><td>Web 层集成测试</td><td>路由、参数校验、异常、响应契约</td><td>MockMvc、@SpringBootTest</td><td>有</td></tr>
+        <tr><td>基础设施集成测试</td><td>真实数据库、缓存或对象存储的协作</td><td>Testcontainers</td><td>后续</td></tr>
+        <tr><td>端到端测试</td><td>真实服务和用户流程</td><td>Playwright 等</td><td>后续</td></tr>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>判断问题</h2>
+      <ol>
+        <li>只测试一个 Java 类，依赖可以直接传入或模拟吗？是纯单元测试。</li>
+        <li>需要 Spring 扫描、依赖注入或配置吗？是 Spring 测试，范围再看是上下文、Web 切片还是完整应用。</li>
+        <li>需要真实 MySQL、Redis 或 MinIO 吗？是基础设施集成测试。</li>
+        <li>需要先启动应用，通过真实端口模拟用户操作吗？通常是端到端测试或外部服务测试。</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>从零开发顺序</h2>
+      <ol>
+        <li>写行为例子：输入、前提、期望结果。</li>
+        <li>为核心业务规则写纯单元测试。</li>
+        <li>实现规则，让测试经历失败、通过和整理。</li>
+        <li>需要 Spring 装配时补上下文测试。</li>
+        <li>需要 HTTP 契约时补 Web 层测试。</li>
+        <li>需要验证 SQL 或真实外部依赖时补 Testcontainers 集成测试。</li>
+        <li>最后用少量端到端测试验证关键用户旅程。</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>是否要先启动项目</h2>
+      <table>
+        <tr><th>测试命令或方式</th><th>是否手动启动应用</th><th>原因</th></tr>
+        <tr><td>Maven 执行 JUnit 测试</td><td>通常不需要</td><td>测试进程会创建自己的类和 Spring 上下文</td></tr>
+        <tr><td>MockMvc</td><td>不需要</td><td>请求在测试进程内经过 MVC，不经过真实端口</td></tr>
+        <tr><td>Testcontainers</td><td>不需要手动启动依赖</td><td>测试代码负责启动容器，前提是容器运行环境可用</td></tr>
+        <tr><td>Playwright 端到端测试</td><td>通常需要</td><td>浏览器要访问已经运行的前端和后端</td></tr>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>当前项目对应关系</h2>
+      <p><code>LearningPlatformApplicationTests</code> 是 Spring Boot 上下文冒烟测试。<code>GlobalExceptionHandlerTest</code> 是 Web 层集成测试。两者都排除了数据源和 Flyway，因此当前测试不证明 MySQL 连接、迁移 SQL 或业务持久化可用。</p>
+    </section>
+
+    <p class="backlink"><a href="../lessons/0006-Java后端测试分层与开发顺序.html">打开配套短课</a></p>
+  </main>
+</body>
+</html>
