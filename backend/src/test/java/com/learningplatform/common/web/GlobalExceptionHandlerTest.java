@@ -22,12 +22,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * DataSource / Flyway 自动配置，测试离线可跑、不依赖服务器隧道。后续持久化票据
  * 再按规格第 9 章引入 Testcontainers 连真实 MySQL。
  */
-@SpringBootTest(properties = "spring.autoconfigure.exclude="
+@SpringBootTest(properties = {
+        "app.iam.enabled=false",
+        "spring.autoconfigure.exclude="
         + "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,"
         + "org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration,"
         + "org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration,"
-        + "org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration")
-@AutoConfigureMockMvc
+        + "org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration"
+})
+@AutoConfigureMockMvc(addFilters = false)
 class GlobalExceptionHandlerTest {
 
     @Autowired

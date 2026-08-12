@@ -28,6 +28,18 @@ public enum ErrorCode {
     /** 已认证但无权限，对应规格的轻量 RBAC hasRole 控制。 */
     FORBIDDEN(1005, HttpStatus.FORBIDDEN, "无权限"),
 
+    /** 同一手机号在发送间隔内重复请求验证码。 */
+    SMS_TOO_FREQUENT(2001, HttpStatus.CONFLICT, "验证码发送过于频繁"),
+
+    /** 注册验证码不存在、错误或已经被消费。 */
+    SMS_CODE_INVALID(2002, HttpStatus.BAD_REQUEST, "验证码无效或已过期"),
+
+    /** 手机号或用户名已经注册。 */
+    USER_EXISTS(2003, HttpStatus.CONFLICT, "用户已存在"),
+
+    /** 用户不存在或已经被停用。 */
+    USER_NOT_AVAILABLE(2004, HttpStatus.UNAUTHORIZED, "用户不可用"),
+
     /** 未预期的系统内部错误，兜底处理器使用，响应 message 不泄漏内部细节。 */
     INTERNAL_ERROR(1999, HttpStatus.INTERNAL_SERVER_ERROR, "系统内部错误");
 

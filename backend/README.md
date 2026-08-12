@@ -17,7 +17,8 @@
 在一个单独的 PowerShell 窗口执行，窗口保持打开：
 
 ```powershell
-ssh -N -o ExitOnForwardFailure=yes -o ServerAliveInterval=60 -L 13306:127.0.0.1:13306 ubuntu@106.55.229.119
+ssh -N -o ExitOnForwardFailure=yes -o ServerAliveInterval=60 -L 13306:127.0.0.1:13306 -L 16379:127.0.0.1:16379 -L 19000:127.0.0.1:19000 -L 19001:127.0.0.1:19001 ubuntu@106.55.229.119
+
 ```
 
 先验证隧道通了再启动，用 Navicat 或以下命令确认 `127.0.0.1:13306` 能连：
