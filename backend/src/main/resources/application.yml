@@ -17,6 +17,19 @@ spring:
     enabled: true
     locations: classpath:db/migration
 
+  data:
+    redis:
+      # 云服务器 Redis 通过 SSH 隧道映射到本机 16379，密码同样只从环境变量读取。
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:16379}
+      password: ${REDIS_PASSWORD:}
+
+app:
+  iam:
+    verification-code:
+      # 留空时生成随机验证码；本地教学或测试可显式设置为 123456。
+      fixed: ${IAM_VERIFICATION_CODE_FIXED:}
+
 server:
   port: 8080
 

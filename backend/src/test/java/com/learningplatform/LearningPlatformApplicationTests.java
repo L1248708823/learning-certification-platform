@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * 真实依赖的集成测试从首期-02 起用 Testcontainers（MySQL / Redis / MinIO 容器）补上。
  */
 @SpringBootTest(properties = {
+        "app.iam.enabled=false",
         "spring.autoconfigure.exclude="
                 + "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,"
                 + "org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration"

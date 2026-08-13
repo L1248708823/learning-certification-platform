@@ -4,8 +4,6 @@ import com.learningplatform.common.exception.BusinessException;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -40,45 +38,23 @@ class VerificationCodeServiceTest {
     }
 
     @Test
-    void verify_shouldConsumeCodeAndRejectReuse() {
+    void assertValid_shouldNotConsumeCode() {
         service.sendCode("13800138000");
 
-        service.verifyAndConsume("13800138000", "123456");
-
-        assertThatThrownBy(() -> service.verifyAndConsume("13800138000", "123456"))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage("验证码无效或已过期");
+        service.assertValid("13800138000", "123456");
+        service.assertValid("13800138000", "123456");
+        service.consume("13800138000", "123456");
     }
 
-    private static final class InMemoryVerificationCodeStore implements VerificationCodeStore {
+    @Test
+    void consume_shouldRejectReuse() {
+        service.sendCode("13800138000");
 
-        private final Map<String, String> savedCodes = new HashMap<>();
-        private Duration savedCodeTtl;
-        private final Map<String, Boolean> permits = new HashMap<>();
+        service.consume("13800138000", "123456");
 
-        @Override
-        public boolean acquireSendPermit(String phone, Duration ttl) {
-            if (permits.containsKey(phone)) {
-                return false;
-            }
-            permits.put(phone, true);
-            return true;
-        }
-
-        @Override
-        public void saveCode(String phone, String code, Duration ttl) {
-            savedCodes.put(phone, code);
-            savedCodeTtl = ttl;
-        }
-
-        @Override
-        public boolean consumeCode(String phone, String code) {
-            if (!code.equals(savedCodes.get(phone))) {
-                return false;
-            }
-            savedCodes.remove(phone);
-            return true;
-        }
+        assertThatThrownBy(() -> service.consume("13800138000", "123456"))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("验证码无效或已过期");
     }
 
     private static final class RecordingSmsSender implements SmsSender {

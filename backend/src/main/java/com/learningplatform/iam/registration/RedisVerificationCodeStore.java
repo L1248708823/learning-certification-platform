@@ -8,7 +8,12 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.List;
 
-/** 使用 Redis 的验证码存储，验证码消费通过 Lua 保证校验和删除的原子性。 */
+/**
+ * Redis 上的验证码存储。
+ *
+ * <p>发送间隔用 {@code SET NX}，同一手机号六十秒内第二个请求拿不到许可。
+ * 消费用 Lua 把 GET 和 DEL 绑成一次原子操作，避免两个请求同时读到同一个码都算通过。
+ */
 @Component
 @ConditionalOnProperty(name = "app.iam.enabled", havingValue = "true", matchIfMissing = true)
 public class RedisVerificationCodeStore implements VerificationCodeStore {
@@ -36,6 +41,11 @@ public class RedisVerificationCodeStore implements VerificationCodeStore {
     @Override
     public void saveCode(String phone, String code, Duration ttl) {
         redisTemplate.opsForValue().set(CODE_KEY_PREFIX + phone, code, ttl);
+    }
+
+    @Override
+    public boolean matches(String phone, String code) {
+        return code.equals(redisTemplate.opsForValue().get(CODE_KEY_PREFIX + phone));
     }
 
     @Override

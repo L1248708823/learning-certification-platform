@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 字典公共查询，对应规格 {@code GET /api/v1/dicts/{typeCode}}。
+ * 首期只读，管理界面和写操作后置到第二期。
+ */
 @RestController
 @RequestMapping("/api/v1/dicts")
 @ConditionalOnProperty(name = "app.iam.enabled", havingValue = "true", matchIfMissing = true)

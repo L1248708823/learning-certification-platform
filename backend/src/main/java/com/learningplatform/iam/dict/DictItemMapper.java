@@ -6,6 +6,10 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
+/**
+ * 字典项查询。排序键和表上 {@code idx_iam_dict_item_type_enabled_sort} 对齐，
+ * 列表走覆盖索引，不在内存里再排一次。
+ */
 @Mapper
 public interface DictItemMapper extends BaseMapper<DictItemEntity> {
 

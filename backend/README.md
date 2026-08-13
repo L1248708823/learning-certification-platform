@@ -8,7 +8,7 @@
 
 本机不装 Docker，MySQL 等依赖跑在云服务器上，本机通过 SSH 隧道访问，见
 [../learning-records/0003-远程Docker环境方案.md](../learning-records/0003-远程Docker环境方案.md)。
-因此启动后端前必须先开隧道，且要提供服务器数据库密码。
+因此启动后端前必须先开隧道，且要提供服务器数据库和 Redis 密码。
 
 ## 2. 启动前准备
 
@@ -40,7 +40,8 @@ cat /etc/learning-platform/learning-platform.env
 找到 `MYSQL_APP_PASSWORD=` 的值，然后在启动后端的那个窗口里设置环境变量：
 
 ```powershell
-$env:DB_PASSWORD = "服务器读到的密码"
+$env:DB_PASSWORD = "服务器读到的 MYSQL_APP_PASSWORD"
+$env:REDIS_PASSWORD = "服务器读到的 REDIS_PASSWORD"
 ```
 
 地址和用户名不需要设置，`application.yml` 里有默认值 `127.0.0.1:13306` 和 `lp_dev`。
@@ -70,7 +71,7 @@ Windows 也可以直接用 `mvnw.cmd spring-boot:run`。
 | `Connection refused` | 隧道没开或端口不对 | 确认隧道窗口还在，`Test-NetConnection` 验证 13306 |
 | `Access denied for user 'lp_dev'` | 密码不对 | 重新读服务器 env 文件，确认 `MYSQL_APP_PASSWORD` |
 | `Unknown database 'iam'` | 服务器库未初始化 | 检查服务器三个库是否存在，见教学清单阶段 G |
-| `DB_PASSWORD` 相关报错 | 环境变量未设置 | 确认在启动的同一个窗口执行了 `$env:DB_PASSWORD = ...` |
+| `DB_PASSWORD` 或 `REDIS_PASSWORD` 相关报错 | 环境变量未设置或值不对 | 确认在启动的同一个窗口设置了两个环境变量 |
 
 ## 6. 不要在仓库里放真实密码
 

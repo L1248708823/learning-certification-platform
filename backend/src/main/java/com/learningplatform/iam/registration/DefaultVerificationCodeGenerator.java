@@ -15,7 +15,7 @@ public class DefaultVerificationCodeGenerator implements VerificationCodeGenerat
     private final String fixedCode;
 
     public DefaultVerificationCodeGenerator(
-            @Value("${app.iam.verification-code.fixed:123456}") String fixedCode) {
+            @Value("${app.iam.verification-code.fixed:}") String fixedCode) {
         this.fixedCode = fixedCode;
     }
 
