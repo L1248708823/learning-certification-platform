@@ -25,6 +25,12 @@ public class RegistrationController {
         this.registrationService = registrationService;
     }
 
+    /**
+     * 校验注册请求并创建学习者用户。
+     *
+     * @param request 手机号验证码注册请求
+     * @return 新建用户的最小公开资料
+     */
     @PostMapping("/register")
     public ApiResponse<RegistrationResult> register(@Valid @RequestBody RegisterRequest request) {
         return ApiResponse.success(registrationService.register(request));

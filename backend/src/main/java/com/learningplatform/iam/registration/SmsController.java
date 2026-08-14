@@ -23,6 +23,12 @@ public class SmsController {
         this.verificationCodeService = verificationCodeService;
     }
 
+    /**
+     * 请求发送注册验证码。
+     *
+     * @param request 含手机号的验证码请求
+     * @return 无业务数据的成功响应；验证码本身不会返回
+     */
     @PostMapping("/code")
     public ApiResponse<Void> sendCode(@Valid @RequestBody SmsCodeRequest request) {
         verificationCodeService.sendCode(request.phone());

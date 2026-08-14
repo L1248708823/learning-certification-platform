@@ -11,8 +11,22 @@ import java.time.Duration;
  */
 public interface VerificationCodeStore {
 
+    /**
+     * 尝试取得一次发送许可。
+     *
+     * @param phone 请求发送验证码的手机号
+     * @param ttl 许可有效期，即同一手机号的最短重发间隔
+     * @return 本次取得许可时为 {@code true}；已有未过期许可时为 {@code false}
+     */
     boolean acquireSendPermit(String phone, Duration ttl);
 
+    /**
+     * 保存验证码并设置有效期。
+     *
+     * @param phone 验证码所属手机号
+     * @param code 六位数字验证码
+     * @param ttl 验证码有效期
+     */
     void saveCode(String phone, String code, Duration ttl);
 
     /**
@@ -21,5 +35,12 @@ public interface VerificationCodeStore {
      */
     boolean matches(String phone, String code);
 
+    /**
+     * 原子核对并消费验证码，成功后该验证码不能再次使用。
+     *
+     * @param phone 验证码所属手机号
+     * @param code 待消费的验证码
+     * @return 码匹配且已成功删除时为 {@code true}
+     */
     boolean consumeCode(String phone, String code);
 }

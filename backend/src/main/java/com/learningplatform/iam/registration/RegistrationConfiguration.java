@@ -17,6 +17,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ConditionalOnProperty(name = "app.iam.enabled", havingValue = "true", matchIfMissing = true)
 public class RegistrationConfiguration {
 
+    /**
+     * 提供 BCrypt 密码哈希器。注册只保存哈希，认证流程在 #24 再复用同一个算法验证密码。
+     *
+     * @return Spring Security 的密码哈希器
+     */
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

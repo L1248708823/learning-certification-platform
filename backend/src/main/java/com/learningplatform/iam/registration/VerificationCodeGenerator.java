@@ -4,5 +4,10 @@ package com.learningplatform.iam.registration;
 @FunctionalInterface
 public interface VerificationCodeGenerator {
 
+    /**
+     * 生成一次可发送的六位数字验证码。
+     *
+     * @return 六位数字字符串
+     */
     String generate();
 }

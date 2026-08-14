@@ -87,6 +87,13 @@
       <version>3.5.16</version>
     </dependency>
 
+    <!-- Lombok：编译期生成实体访问器。版本由 Boot BOM 管理。IDE 需启用注解处理并安装 Lombok 插件才能跳转。 -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+
     <!-- 测试栈：JUnit 5 + Mockito + AssertJ。注意 Boot 3.5 的 starter-test 不带 Testcontainers，后续票据按需显式引入 -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

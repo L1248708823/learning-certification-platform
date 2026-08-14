@@ -11,7 +11,10 @@ import java.security.SecureRandom;
 @ConditionalOnProperty(name = "app.iam.enabled", havingValue = "true", matchIfMissing = true)
 public class DefaultVerificationCodeGenerator implements VerificationCodeGenerator {
 
+    /** 用于生成不可预测的生产验证码。 */
     private final SecureRandom random = new SecureRandom();
+
+    /** 本地教学或测试使用的固定验证码；空白时生成随机码。 */
     private final String fixedCode;
 
     public DefaultVerificationCodeGenerator(

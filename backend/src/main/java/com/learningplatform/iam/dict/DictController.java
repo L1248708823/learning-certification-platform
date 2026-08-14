@@ -24,6 +24,12 @@ public class DictController {
         this.dictService = dictService;
     }
 
+    /**
+     * 返回一个字典类型下的启用项。
+     *
+     * @param typeCode 路径中的字典类型代码
+     * @return 统一响应壳中的字典项列表
+     */
     @GetMapping("/{typeCode}")
     public ApiResponse<List<DictItemView>> findEnabledItems(@PathVariable String typeCode) {
         return ApiResponse.success(dictService.findEnabledItems(typeCode));

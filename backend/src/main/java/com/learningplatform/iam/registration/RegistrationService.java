@@ -40,6 +40,15 @@ public class RegistrationService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * 用有效手机号验证码创建学习者账号，并授予 {@code LEARNER} 角色。
+     *
+     * <p>数据库写入成功前验证码保持可用，避免 MySQL 回滚后用户失去重试凭据。
+     *
+     * @param request 已通过 Web 参数校验的注册请求
+     * @return 新用户的最小公开资料
+     * @throws BusinessException 验证码无效或用户名、手机号已存在时抛出业务错误
+     */
     @Transactional
     public RegistrationResult register(RegisterRequest request) {
         verificationCodeService.assertValid(request.phone(), request.code());

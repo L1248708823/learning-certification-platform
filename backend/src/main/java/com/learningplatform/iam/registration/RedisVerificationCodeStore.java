@@ -18,8 +18,13 @@ import java.util.List;
 @ConditionalOnProperty(name = "app.iam.enabled", havingValue = "true", matchIfMissing = true)
 public class RedisVerificationCodeStore implements VerificationCodeStore {
 
+    /** 注册验证码键的固定前缀，完整键后缀为手机号。 */
     private static final String CODE_KEY_PREFIX = "iam:sms:registration:code:";
+
+    /** 发送频率许可键的固定前缀，完整键后缀为手机号。 */
     private static final String PERMIT_KEY_PREFIX = "iam:sms:registration:permit:";
+
+    /** 比较验证码并删除键的 Lua 脚本，保证一次验证码只能消费一次。 */
     private static final DefaultRedisScript<Long> CONSUME_SCRIPT = new DefaultRedisScript<>(
             "if redis.call('get', KEYS[1]) == ARGV[1] then "
                     + "return redis.call('del', KEYS[1]) else return 0 end",
