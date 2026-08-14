@@ -1,6 +1,9 @@
 package com.learningplatform.iam.registration;
 
 import com.learningplatform.common.api.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @ConditionalOnProperty(name = "app.iam.enabled", havingValue = "true", matchIfMissing = true)
+@Tag(name = "IAM / 注册", description = "学习者使用手机号验证码注册。")
 public class RegistrationController {
 
     private final RegistrationService registrationService;
@@ -32,6 +36,12 @@ public class RegistrationController {
      * @return 新建用户的最小公开资料
      */
     @PostMapping("/register")
+    @Operation(summary = "注册学习者账号", description = "验证码校验通过后创建学习者账号。密码只在请求中使用，成功响应不会返回密码或密码哈希。")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "账号创建成功"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "请求参数不合法，或验证码无效、过期，错误码为 1001 或 2002"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "手机号或用户名已注册，错误码为 2003")
+    })
     public ApiResponse<RegistrationResult> register(@Valid @RequestBody RegisterRequest request) {
         return ApiResponse.success(registrationService.register(request));
     }

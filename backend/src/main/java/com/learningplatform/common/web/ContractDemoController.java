@@ -3,6 +3,7 @@ package com.learningplatform.common.web;
 import com.learningplatform.common.api.ApiResponse;
 import com.learningplatform.common.api.ErrorCode;
 import com.learningplatform.common.exception.BusinessException;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1/_demo")
+@Hidden
 public class ContractDemoController {
 
     /** 成功响应演示：原样回显请求体。 */

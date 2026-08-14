@@ -14,6 +14,12 @@
   用于确认 Java 21 语法与运行时事实。
 - [Spring Boot Getting Started](https://docs.spring.io/spring-boot/reference/getting-started.html)
   官方入门路径，理解 starter、自动配置和第一个应用。
+- [Springdoc OpenAPI v2.9.0](https://github.com/springdoc/springdoc-openapi/tree/v2.9.0)
+  当前 Spring Boot 3 项目的 OpenAPI 生成器。用于确认 Starter、Swagger UI 路径、注解和兼容范围。
+- [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
+  接口描述文件的标准。用于理解 /v3/api-docs JSON 中 paths、components、schemas 和 responses 的含义。
+- [Swagger UI](https://swagger.io/tools/swagger-ui/)
+  OpenAPI 的交互式浏览器界面。用于理解页面只负责展示和试调，接口定义仍来自 OpenAPI 文件。
 - [Spring Boot Logging](https://docs.spring.io/spring-boot/reference/features/logging.html)
   日志章节，logback-spring.xml 标准写法的第一现场。
 - [Spring Boot Actuator](https://docs.spring.io/spring-boot/reference/actuator/)

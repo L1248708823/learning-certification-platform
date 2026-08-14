@@ -114,4 +114,21 @@ class GlobalExceptionHandlerTest {
                 // 兜底响应的 message 是安全文案，不泄漏异常内部细节
                 .andExpect(jsonPath("$.data").isEmpty());
     }
+
+    /** OpenAPI 页面只展示真实业务接口，契约演示入口不应出现在调用方目录中。 */
+    @Test
+    void openApi_shouldExposeMetadataAndHideContractDemoEndpoints() throws Exception {
+        mockMvc.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.info.title").value("在线教育与职业认证平台 API"))
+                .andExpect(jsonPath("$.info.version").value("v1"))
+                .andExpect(jsonPath("$.paths['/api/v1/_demo/echo']").doesNotExist());
+    }
+
+    /** Swagger UI 是本地学习和人工调试的入口，依赖升级后也必须保持可访问。 */
+    @Test
+    void swaggerUi_shouldBeAvailable() throws Exception {
+        mockMvc.perform(get("/swagger-ui/index.html"))
+                .andExpect(status().isOk());
+    }
 }

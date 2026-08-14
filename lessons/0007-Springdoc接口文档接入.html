@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第七课：Springdoc 接口文档接入</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">LESSON 0007</p>
+    <h1>Springdoc 接口文档接入</h1>
+    <p class="lead">学会追踪一条接口如何从 Controller 代码，变成可打开、可试调的 Swagger UI 页面。</p>
+
+    <section class="card">
+      <h2>这次到底接入了什么</h2>
+      <p>当前项目接入的是 <code>Springdoc OpenAPI</code>。它在 Spring Boot 运行时读取 Controller、请求 DTO、响应 DTO 和参数校验注解，生成标准 OpenAPI 文档。Swagger UI 读取这份文档后显示页面，并提供 Try it out 调试入口。</p>
+      <pre><code>Controller + DTO + Bean Validation
+              ↓ Springdoc 在运行时扫描
+        /v3/api-docs JSON
+              ↓ Swagger UI 读取
+ /swagger-ui/index.html 页面</code></pre>
+      <p>这里有两个边界。Springdoc 负责生成接口契约，Swagger UI 负责显示和调试。它们都不处理注册、验证码或数据库业务。</p>
+    </section>
+
+    <section class="card">
+      <h2>第一步：Maven 加 Starter</h2>
+      <p>我在 <code>backend/pom.xml</code> 加入了下面的依赖：</p>
+      <pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;org.springdoc&lt;/groupId&gt;
+  &lt;artifactId&gt;springdoc-openapi-starter-webmvc-ui&lt;/artifactId&gt;
+  &lt;version&gt;2.9.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+      <p><code>starter-webmvc-ui</code> 的名字包含三个信息：它适用于 Spring MVC，能生成 OpenAPI，也带 Swagger UI 的静态资源。Maven 会下载它和它声明的间接依赖。IDEA 的 Maven Reload 与命令行 <code>mvnw.cmd test</code> 都会完成这一步。</p>
+      <p>当前项目使用 Spring Boot 3.5，因此选 Springdoc v2。Springdoc v3 对应 Spring Boot 4，版本线不能混用。</p>
+    </section>
+
+    <section class="card">
+      <h2>第二步：理解自动生成的范围</h2>
+      <table>
+        <tr><th>现有代码</th><th>Springdoc 自动得到的文档信息</th></tr>
+        <tr><td><code>@PostMapping(&quot;/code&quot;)</code></td><td>HTTP 方法 POST 与路径 <code>/api/v1/sms/code</code></td></tr>
+        <tr><td><code>SmsCodeRequest</code></td><td>请求体字段 <code>phone</code> 及其类型</td></tr>
+        <tr><td><code>@NotBlank</code>、<code>@Pattern</code></td><td>必填约束和正则规则</td></tr>
+        <tr><td><code>ApiResponse&lt;Void&gt;</code></td><td>成功响应外层的 <code>code</code>、<code>message</code>、<code>data</code> 结构</td></tr>
+      </table>
+      <p>自动生成不理解业务规则。例如验证码五分钟有效、六十秒内不可重复发送、错误码 2001 的含义，都无法从 Java 类型推出。因此需要少量补充注解。</p>
+    </section>
+
+    <section class="card">
+      <h2>第三步：放全局信息到配置类</h2>
+      <p><code>OpenApiConfiguration.java</code> 创建了一个 <code>OpenAPI</code> 类型的 Spring Bean：</p>
+      <pre><code>@Bean
+public OpenAPI learningPlatformOpenApi() {
+    return new OpenAPI().info(new Info()
+            .title(&quot;在线教育与职业认证平台 API&quot;)
+            .version(&quot;v1&quot;));
+}</code></pre>
+      <p><code>@Configuration</code> 让 Spring 扫描这个类，<code>@Bean</code> 把返回对象放进 Spring 容器。Springdoc 发现这个 <code>OpenAPI</code> 对象后，把 title、version 和 description 合并进自动生成的接口定义。方法名可以按项目语义命名，Springdoc 关心的是返回类型和 Bean。</p>
+    </section>
+
+    <section class="card">
+      <h2>第四步：每种注解解决一个问题</h2>
+      <table>
+        <tr><th>注解</th><th>当前代码的位置</th><th>负责的信息</th></tr>
+        <tr><td><code>@Tag</code></td><td>SmsController、RegistrationController、DictController</td><td>页面中的业务分组</td></tr>
+        <tr><td><code>@Operation</code></td><td>每个公开接口方法</td><td>接口摘要和业务限制</td></tr>
+        <tr><td><code>@ApiResponses</code></td><td>每个公开接口方法</td><td>成功和真实失败状态码</td></tr>
+        <tr><td><code>@Schema</code></td><td>公开请求、响应字段和 ApiResponse</td><td>调用方需要知道的字段语义、样例、只写属性</td></tr>
+        <tr><td><code>@Hidden</code></td><td>ContractDemoController</td><td>从业务接口目录排除测试演示入口</td></tr>
+      </table>
+      <p>例如发送验证码接口的注解说明了有效期、发送间隔和 409 响应。这个信息属于外部接口契约，放在 <code>@Operation</code> 和 <code>@ApiResponses</code> 合适。</p>
+      <pre><code>@Operation(summary = &quot;发送注册验证码&quot;,
+        description = &quot;验证码有效期为五分钟；同一手机号六十秒内只能发送一次。&quot;)
+@ApiResponses({
+        @ApiResponse(responseCode = &quot;200&quot;, description = &quot;验证码已发送&quot;),
+        @ApiResponse(responseCode = &quot;409&quot;, description = &quot;发送间隔未结束，错误码为 2001&quot;)
+})</code></pre>
+      <p>JavaDoc 仍然保留。它面向读代码的人，解释设计原因、事务边界和后置计划。<code>@Schema</code> 面向接口调用方。两者只在外部契约需要时写相同信息，避免维护两份无意义的说明。</p>
+    </section>
+
+    <section class="card">
+      <h2>第五步：为什么还要测试文档</h2>
+      <p>文档端点也是应用的一部分。依赖升级、路径冲突或错误配置都可能让页面失效。我在 <code>GlobalExceptionHandlerTest</code> 增加了两项 Web 层测试：</p>
+      <pre><code>GET /v3/api-docs              → 200，且有项目 title
+GET /swagger-ui/index.html    → 200</code></pre>
+      <p>它们通过 MockMvc 在测试 JVM 内调用 Spring MVC，不需要先启动真实端口，也不需要连接数据库。测试配置关闭 IAM，因此这一层验证文档能力和隐藏规则；注册、验证码、字典接口的完整联动由 <code>IamRegistrationAndDictionaryIT</code> 在 <code>mvn verify</code> 阶段结合 MySQL、Redis 验证。</p>
+    </section>
+
+    <section class="card">
+      <h2>现在怎样亲自检查</h2>
+      <ol>
+        <li>在 IDEA 的 Maven 工具窗口执行 Reload，或在 <code>backend</code> 目录运行 <code>mvnw.cmd test</code>。</li>
+        <li>用你已配置 DB_PASSWORD、REDIS_PASSWORD 和 SSH 隧道的启动配置运行 <code>LearningPlatformApplication</code>。</li>
+        <li>打开 <code>http://localhost:8080/swagger-ui/index.html</code>。</li>
+        <li>展开 <code>IAM / 注册</code>，先看 <code>POST /api/v1/sms/code</code> 的 Request body、Responses 和 Schema。</li>
+        <li>点击 Try it out 后再执行。验证码不会出现在 HTTP 响应中，本地 MockSmsSender 会记录它。</li>
+      </ol>
+      <p>生产环境不应默认公开文档端点。后续接入认证和部署配置时，要根据访问策略关闭或限制 <code>/v3/api-docs</code> 与 <code>/swagger-ui/**</code>。</p>
+    </section>
+
+    <section class="card scenario">
+      <h2>两分钟自测</h2>
+      <div class="quiz" data-good="正确。Starter 提供自动配置和 Swagger UI 资源，业务接口仍由 Controller 实现。" data-bad="回到第一节：Springdoc 读取 Controller 生成契约，它不接管业务请求处理。">
+        <p>问题一：加入 Springdoc 后，注册接口的业务逻辑由 Springdoc 执行吗？</p>
+        <button type="button" data-answer="wrong">由 Springdoc 执行</button>
+        <button type="button" data-answer="right">仍由 RegistrationController 和 RegistrationService 执行</button>
+        <p class="feedback" role="status" aria-live="polite"></p>
+      </div>
+      <div class="quiz" data-good="正确。HTTP 方法和路径可以自动推断，六十秒发送间隔是业务语义，必须由人明确说明。" data-bad="先分清信息来源：类型和 Spring 注解可推断，业务时限和错误码不能从类型推断。">
+        <p>问题二：验证码六十秒发送间隔最适合写在哪里？</p>
+        <button type="button" data-answer="wrong">只依赖 Springdoc 自动推断</button>
+        <button type="button" data-answer="right">@Operation 的说明和服务层 JavaDoc</button>
+        <p class="feedback" role="status" aria-live="polite"></p>
+      </div>
+      <div class="quiz" data-good="正确。MockMvc 在测试进程内路由请求，测试的运行边界与手工启动应用不同。" data-bad="回看第五节：MockMvc 使用测试 JVM 中的 Spring MVC，不经过 localhost 端口。">
+        <p>问题三：测试 /v3/api-docs 时，必须先手工启动 8080 端口吗？</p>
+        <button type="button" data-answer="wrong">必须</button>
+        <button type="button" data-answer="right">不需要，MockMvc 会在测试进程内调用</button>
+        <p class="feedback" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>官方资料与下一步</h2>
+      <p><a href="https://github.com/springdoc/springdoc-openapi/tree/v2.9.0" rel="noreferrer">Springdoc OpenAPI v2.9.0</a>、<a href="https://spec.openapis.org/oas/latest.html" rel="noreferrer">OpenAPI Specification</a>、<a href="https://swagger.io/tools/swagger-ui/" rel="noreferrer">Swagger UI</a>。</p>
+      <p>速查版见 <a href="../reference/Springdoc接口文档速查.html">Springdoc 接口文档速查</a>。完成自测后，告诉我哪一个环节仍然不清楚，我会用当前 Controller 的实际代码继续拆解。</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,5 +1,7 @@
 package com.learningplatform.common.api;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * 统一 API 响应体。所有接口都返回这个结构，契约见 docs/spec/0001 第 5 章。
  *
@@ -16,7 +18,19 @@ package com.learningplatform.common.api;
  *
  * @param <T> 业务数据类型
  */
-public record ApiResponse<T>(int code, String message, T data) {
+public record ApiResponse<T>(
+
+        /** 业务结果码，0 表示成功，其他取值见 {@link ErrorCode}。 */
+        @Schema(description = "业务结果码。0 表示成功，失败时取值见错误码定义。", example = "0")
+        int code,
+
+        /** 给调用方看的结果说明，成功时固定为 OK。 */
+        @Schema(description = "结果说明。成功时固定为 OK，失败时是可展示的错误说明。", example = "OK")
+        String message,
+
+        /** 业务数据，失败时通常为 null，参数校验失败时为字段错误明细列表。 */
+        @Schema(description = "业务数据。失败时通常为 null，参数校验失败时为字段错误明细列表。")
+        T data) {
 
     /** 成功固定 code=0，message 固定 "OK"。 */
     public static <T> ApiResponse<T> success(T data) {
