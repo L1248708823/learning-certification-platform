@@ -89,6 +89,19 @@ class IamRegistrationAndDictionaryIT {
                 .andExpect(jsonPath("$.message").value("字典类型不存在"));
     }
 
+    /** IAM OpenAPI 分组只收录 IAM 包中的真实公开接口，供 Knife4j 的文档资源列表使用。 */
+    @Test
+    void iamOpenApiGroup_shouldContainBusinessEndpointsAndTags() throws Exception {
+        mockMvc.perform(get("/v3/api-docs/IAM"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.paths['/api/v1/sms/code'].post").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/auth/register'].post").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/dicts/{typeCode}'].get").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/_demo/echo']").doesNotExist())
+                .andExpect(jsonPath("$.tags[?(@.name == '注册')]").exists())
+                .andExpect(jsonPath("$.tags[?(@.name == '字典')]").exists());
+    }
+
     @Test
     void registration_shouldSendCodeAndCreateLearnerAccount() throws Exception {
         RegistrationData data = nextRegistrationData();

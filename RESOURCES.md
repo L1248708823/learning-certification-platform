@@ -14,12 +14,12 @@
   用于确认 Java 21 语法与运行时事实。
 - [Spring Boot Getting Started](https://docs.spring.io/spring-boot/reference/getting-started.html)
   官方入门路径，理解 starter、自动配置和第一个应用。
-- [Springdoc OpenAPI v2.9.0](https://github.com/springdoc/springdoc-openapi/tree/v2.9.0)
-  当前 Spring Boot 3 项目的 OpenAPI 生成器。用于确认 Starter、Swagger UI 路径、注解和兼容范围。
+- [Springdoc OpenAPI](https://springdoc.org/)
+  Knife4j 在当前项目底层使用的 OpenAPI 生成器。用于理解 Controller 扫描、Schema 与标准 OpenAPI 文档。
+- [Knife4j](https://doc.xiaominfo.com/docs/quick-start)
+  当前项目的 Java API 文档界面。项目仅使用其 UI 模块；Starter 的 Springdoc 版本与当前 Boot 基线不兼容。
 - [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
   接口描述文件的标准。用于理解 /v3/api-docs JSON 中 paths、components、schemas 和 responses 的含义。
-- [Swagger UI](https://swagger.io/tools/swagger-ui/)
-  OpenAPI 的交互式浏览器界面。用于理解页面只负责展示和试调，接口定义仍来自 OpenAPI 文件。
 - [Spring Boot Logging](https://docs.spring.io/spring-boot/reference/features/logging.html)
   日志章节，logback-spring.xml 标准写法的第一现场。
 - [Spring Boot Actuator](https://docs.spring.io/spring-boot/reference/actuator/)

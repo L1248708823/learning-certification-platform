@@ -30,6 +30,13 @@ app:
       # 留空时生成随机验证码；本地教学或测试可显式设置为 123456。
       fixed: ${IAM_VERIFICATION_CODE_FIXED:}
 
+# Knife4j 底层使用 Springdoc。IAM 是当前唯一的真实业务模块，注册和字典通过 @Tag 在组内继续分类。
+springdoc:
+  group-configs:
+    - group: IAM
+      packages-to-scan: com.learningplatform.iam
+      paths-to-match: /api/v1/**
+
 server:
   port: 8080
 

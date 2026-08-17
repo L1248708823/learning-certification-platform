@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/dicts")
 @ConditionalOnProperty(name = "app.iam.enabled", havingValue = "true", matchIfMissing = true)
-@Tag(name = "IAM / 字典", description = "供客户端读取受控代码和展示标签。")
+@Tag(name = "字典", description = "供客户端读取受控代码和展示标签。")
 public class DictController {
 
     private final DictService dictService;

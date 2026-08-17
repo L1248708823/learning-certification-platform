@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Springdoc 接口文档速查</title>
+  <title>Knife4j 接口文档速查</title>
   <link rel="stylesheet" href="../assets/lesson.css">
 </head>
 <body>
   <main class="page">
     <p class="eyebrow">REFERENCE</p>
-    <h1>Springdoc 接口文档速查</h1>
-    <p class="lead">先区分自动生成的信息和需要人工补充的信息，再决定注解放在哪里。</p>
+    <h1>Knife4j 接口文档速查</h1>
+    <p class="lead">Knife4j 负责阅读和试调，Springdoc 负责生成 OpenAPI。先分清这两个角色，再决定注解和配置放在哪里。</p>
 
     <section class="card">
       <h2>生成链路</h2>
@@ -20,7 +20,7 @@
                     ↓
       /v3/api-docs 和 /v3/api-docs.yaml
                     ↓
-          /swagger-ui/index.html</code></pre>
+              Knife4j /doc.html</code></pre>
     </section>
 
     <section class="card">
@@ -40,7 +40,7 @@
       <h2>当前项目入口</h2>
       <table>
         <tr><th>地址</th><th>用途</th></tr>
-        <tr><td>http://localhost:8080/swagger-ui/index.html</td><td>查看文档和人工试调接口</td></tr>
+        <tr><td>http://localhost:8080/doc.html</td><td>查看 Knife4j 文档和人工试调接口</td></tr>
         <tr><td>http://localhost:8080/v3/api-docs</td><td>查看机器可读的 OpenAPI JSON</td></tr>
         <tr><td>http://localhost:8080/v3/api-docs.yaml</td><td>查看 YAML 格式，可供其他工具导入</td></tr>
       </table>
@@ -49,20 +49,20 @@
     <section class="card">
       <h2>排查顺序</h2>
       <ol>
-        <li>Swagger UI 404：检查 pom 是否有 <code>springdoc-openapi-starter-webmvc-ui</code>，随后 Maven Reload。</li>
-        <li>UI 能打开但没有接口：检查 Controller 是否被 Spring 扫描，是否带 <code>@Hidden</code>，以及条件装配属性是否关闭。</li>
+        <li>Knife4j 404：检查 pom 是否有 <code>knife4j-openapi3-ui</code> 与 <code>springdoc-openapi-starter-webmvc-ui</code>，随后 Maven Reload。</li>
+        <li>页面能打开但没有接口：检查 IAM Group 的 packages-to-scan、Controller 是否被 Spring 扫描、是否带 <code>@Hidden</code>，以及条件装配属性是否关闭。</li>
         <li>字段说明不足：先看 Bean Validation 能否表达，业务语义再补 <code>@Schema</code>。</li>
         <li>页面显示的状态码不完整：补 <code>@ApiResponses</code>，只列真实会发生的业务错误。</li>
-        <li>手工调用失败：先看 HTTP 响应。数据库、Redis、验证码和认证失败属于业务运行问题，不是 Swagger UI 故障。</li>
+        <li>手工调用失败：先看 HTTP 响应。数据库、Redis、验证码和认证失败属于业务运行问题，不是 Knife4j 故障。</li>
       </ol>
     </section>
 
     <section class="card">
       <h2>生产边界</h2>
-      <p>本地学习环境可开放文档端点。生产环境应按访问策略关闭或保护 <code>/v3/api-docs</code> 与 <code>/swagger-ui/**</code>，避免不必要地公开内部接口结构。</p>
+      <p>本地学习环境可开放文档端点。生产环境应按访问策略关闭或保护 <code>/v3/api-docs</code> 与 <code>/doc.html</code>，避免不必要地公开内部接口结构。</p>
     </section>
 
-    <p class="backlink"><a href="../lessons/0007-Springdoc接口文档接入.html">打开配套短课</a></p>
+    <p class="backlink"><a href="../lessons/0007-Knife4j接口文档接入.html">打开配套短课</a></p>
   </main>
 </body>
 </html>

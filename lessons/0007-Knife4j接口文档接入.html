@@ -3,37 +3,43 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>第七课：Springdoc 接口文档接入</title>
+  <title>第七课：Knife4j 接口文档接入</title>
   <link rel="stylesheet" href="../assets/lesson.css">
   <script src="../assets/quiz.js" defer></script>
 </head>
 <body>
   <main class="page">
     <p class="eyebrow">LESSON 0007</p>
-    <h1>Springdoc 接口文档接入</h1>
-    <p class="lead">学会追踪一条接口如何从 Controller 代码，变成可打开、可试调的 Swagger UI 页面。</p>
+    <h1>Knife4j 接口文档接入</h1>
+    <p class="lead">学会追踪一条接口如何从 Controller 代码，经 Springdoc 生成 OpenAPI，再变成可打开、可试调的 Knife4j 页面。</p>
 
     <section class="card">
       <h2>这次到底接入了什么</h2>
-      <p>当前项目接入的是 <code>Springdoc OpenAPI</code>。它在 Spring Boot 运行时读取 Controller、请求 DTO、响应 DTO 和参数校验注解，生成标准 OpenAPI 文档。Swagger UI 读取这份文档后显示页面，并提供 Try it out 调试入口。</p>
+      <p>当前项目接入的是 <code>Knife4j UI + Springdoc</code>。Springdoc 在运行时读取 Controller、请求 DTO、响应 DTO 和参数校验注解，生成标准 OpenAPI 文档；Knife4j UI 读取这份文档后显示页面，并提供试调入口。</p>
       <pre><code>Controller + DTO + Bean Validation
               ↓ Springdoc 在运行时扫描
         /v3/api-docs JSON
-              ↓ Swagger UI 读取
- /swagger-ui/index.html 页面</code></pre>
-      <p>这里有两个边界。Springdoc 负责生成接口契约，Swagger UI 负责显示和调试。它们都不处理注册、验证码或数据库业务。</p>
+              ↓ Knife4j 读取
+        /doc.html 页面</code></pre>
+      <p>这里有两个边界。Springdoc 负责生成接口契约，Knife4j 负责显示和调试。它们都不处理注册、验证码或数据库业务。</p>
     </section>
 
     <section class="card">
-      <h2>第一步：Maven 加 Starter</h2>
-      <p>我在 <code>backend/pom.xml</code> 加入了下面的依赖：</p>
+      <h2>第一步：Maven 加 UI 和生成器</h2>
+      <p>我在 <code>backend/pom.xml</code> 分别加入 UI 与文档生成器：</p>
       <pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;com.github.xiaoymin&lt;/groupId&gt;
+  &lt;artifactId&gt;knife4j-openapi3-ui&lt;/artifactId&gt;
+  &lt;version&gt;4.5.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
   &lt;groupId&gt;org.springdoc&lt;/groupId&gt;
   &lt;artifactId&gt;springdoc-openapi-starter-webmvc-ui&lt;/artifactId&gt;
   &lt;version&gt;2.9.0&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
-      <p><code>starter-webmvc-ui</code> 的名字包含三个信息：它适用于 Spring MVC，能生成 OpenAPI，也带 Swagger UI 的静态资源。Maven 会下载它和它声明的间接依赖。IDEA 的 Maven Reload 与命令行 <code>mvnw.cmd test</code> 都会完成这一步。</p>
-      <p>当前项目使用 Spring Boot 3.5，因此选 Springdoc v2。Springdoc v3 对应 Spring Boot 4，版本线不能混用。</p>
+      <p>这里刻意没有使用 Knife4j 的 Spring Boot Starter。Knife4j 4.5.0 Starter 内置 Springdoc 2.3.0，它与当前 Spring Boot 3.5 的 Spring Framework 6.2 不兼容；将 Springdoc 单独对齐到 2.9.0 后，Starter 自己的扩展也会出现二进制兼容错误。UI 模块只含静态资源，因此不会干预 Springdoc 的运行时版本。</p>
+      <p>IDEA 的 Maven Reload 与命令行 <code>mvnw.cmd test</code> 都会完成依赖解析。每次调整依赖后，至少验证 <code>/v3/api-docs</code> 返回 200，页面文件能返回 200 并不代表接口文档可用。</p>
     </section>
 
     <section class="card">
@@ -84,8 +90,8 @@ public OpenAPI learningPlatformOpenApi() {
       <h2>第五步：为什么还要测试文档</h2>
       <p>文档端点也是应用的一部分。依赖升级、路径冲突或错误配置都可能让页面失效。我在 <code>GlobalExceptionHandlerTest</code> 增加了两项 Web 层测试：</p>
       <pre><code>GET /v3/api-docs              → 200，且有项目 title
-GET /swagger-ui/index.html    → 200</code></pre>
-      <p>它们通过 MockMvc 在测试 JVM 内调用 Spring MVC，不需要先启动真实端口，也不需要连接数据库。测试配置关闭 IAM，因此这一层验证文档能力和隐藏规则；注册、验证码、字典接口的完整联动由 <code>IamRegistrationAndDictionaryIT</code> 在 <code>mvn verify</code> 阶段结合 MySQL、Redis 验证。</p>
+GET /doc.html                 → 200</code></pre>
+      <p>它们通过 MockMvc 在测试 JVM 内调用 Spring MVC，不需要先启动真实端口，也不需要连接数据库。测试配置关闭 IAM，因此这一层验证文档能力和隐藏规则；<code>IamRegistrationAndDictionaryIT</code> 会验证 IAM OpenAPI Group、注册、验证码和字典接口，并在 <code>mvn verify</code> 阶段结合 MySQL、Redis 运行。</p>
     </section>
 
     <section class="card">
@@ -93,18 +99,18 @@ GET /swagger-ui/index.html    → 200</code></pre>
       <ol>
         <li>在 IDEA 的 Maven 工具窗口执行 Reload，或在 <code>backend</code> 目录运行 <code>mvnw.cmd test</code>。</li>
         <li>用你已配置 DB_PASSWORD、REDIS_PASSWORD 和 SSH 隧道的启动配置运行 <code>LearningPlatformApplication</code>。</li>
-        <li>打开 <code>http://localhost:8080/swagger-ui/index.html</code>。</li>
-        <li>展开 <code>IAM / 注册</code>，先看 <code>POST /api/v1/sms/code</code> 的 Request body、Responses 和 Schema。</li>
+        <li>打开 <code>http://localhost:8080/doc.html</code>。</li>
+        <li>选择 <code>IAM</code> 文档组，再展开 <code>注册</code>，先看 <code>POST /api/v1/sms/code</code> 的 Request body、Responses 和 Schema。</li>
         <li>点击 Try it out 后再执行。验证码不会出现在 HTTP 响应中，本地 MockSmsSender 会记录它。</li>
       </ol>
-      <p>生产环境不应默认公开文档端点。后续接入认证和部署配置时，要根据访问策略关闭或限制 <code>/v3/api-docs</code> 与 <code>/swagger-ui/**</code>。</p>
+      <p>生产环境不应默认公开文档端点。后续接入认证和部署配置时，要根据访问策略关闭或限制 <code>/v3/api-docs</code> 与 <code>/doc.html</code>。</p>
     </section>
 
     <section class="card scenario">
       <h2>两分钟自测</h2>
-      <div class="quiz" data-good="正确。Starter 提供自动配置和 Swagger UI 资源，业务接口仍由 Controller 实现。" data-bad="回到第一节：Springdoc 读取 Controller 生成契约，它不接管业务请求处理。">
-        <p>问题一：加入 Springdoc 后，注册接口的业务逻辑由 Springdoc 执行吗？</p>
-        <button type="button" data-answer="wrong">由 Springdoc 执行</button>
+      <div class="quiz" data-good="正确。Knife4j 与 Springdoc 负责文档，业务接口仍由 Controller 和 Service 实现。" data-bad="回到第一节：Springdoc 读取 Controller 生成契约，Knife4j 显示契约，它们不接管业务请求处理。">
+        <p>问题一：加入 Knife4j 后，注册接口的业务逻辑由 Knife4j 执行吗？</p>
+        <button type="button" data-answer="wrong">由 Knife4j 执行</button>
         <button type="button" data-answer="right">仍由 RegistrationController 和 RegistrationService 执行</button>
         <p class="feedback" role="status" aria-live="polite"></p>
       </div>
@@ -124,8 +130,8 @@ GET /swagger-ui/index.html    → 200</code></pre>
 
     <section class="card">
       <h2>官方资料与下一步</h2>
-      <p><a href="https://github.com/springdoc/springdoc-openapi/tree/v2.9.0" rel="noreferrer">Springdoc OpenAPI v2.9.0</a>、<a href="https://spec.openapis.org/oas/latest.html" rel="noreferrer">OpenAPI Specification</a>、<a href="https://swagger.io/tools/swagger-ui/" rel="noreferrer">Swagger UI</a>。</p>
-      <p>速查版见 <a href="../reference/Springdoc接口文档速查.html">Springdoc 接口文档速查</a>。完成自测后，告诉我哪一个环节仍然不清楚，我会用当前 Controller 的实际代码继续拆解。</p>
+      <p><a href="https://doc.xiaominfo.com/docs/quick-start" rel="noreferrer">Knife4j Spring Boot 3 接入说明</a>、<a href="https://springdoc.org/" rel="noreferrer">Springdoc OpenAPI</a>、<a href="https://spec.openapis.org/oas/latest.html" rel="noreferrer">OpenAPI Specification</a>。</p>
+      <p>速查版见 <a href="../reference/Knife4j接口文档速查.html">Knife4j 接口文档速查</a>。完成自测后，告诉我哪一个环节仍然不清楚，我会用当前 Controller 的实际代码继续拆解。</p>
     </section>
   </main>
 </body>

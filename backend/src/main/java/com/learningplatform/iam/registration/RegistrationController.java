@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @ConditionalOnProperty(name = "app.iam.enabled", havingValue = "true", matchIfMissing = true)
-@Tag(name = "IAM / 注册", description = "学习者使用手机号验证码注册。")
+@Tag(name = "注册", description = "学习者使用手机号验证码注册。")
 public class RegistrationController {
 
     private final RegistrationService registrationService;

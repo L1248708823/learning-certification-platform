@@ -94,7 +94,14 @@
       <optional>true</optional>
     </dependency>
 
-    <!-- OpenAPI 文档：从 Spring MVC 路由和校验注解生成契约，并提供本地 Swagger UI。Boot 3 使用 Springdoc v2。 -->
+    <!-- Knife4j UI：只提供 doc.html 与前端静态资源，避免引入与 Boot 3.5 不兼容的旧 Starter 扩展。 -->
+    <dependency>
+      <groupId>com.github.xiaoymin</groupId>
+      <artifactId>knife4j-openapi3-ui</artifactId>
+      <version>4.5.0</version>
+    </dependency>
+
+    <!-- 文档模型生成器：与 Spring Boot 3.5 的 Spring Framework 6.2 对齐，由 Knife4j UI 读取。 -->
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
