@@ -1,5 +1,6 @@
 package com.learningplatform.iam.registration;
 
+import com.learningplatform.iam.validation.MainlandMobilePhone;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -16,7 +17,7 @@ public record RegisterRequest(
         /** 用于接收验证码和识别注册人的中国大陆手机号。 */
         @Schema(description = "用于接收验证码和识别注册人的中国大陆手机号。", example = "13800138000")
         @NotBlank(message = "手机号不能为空")
-        @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
+        @MainlandMobilePhone
         String phone,
 
         /** 发送到 {@link #phone()} 的六位数字验证码。 */

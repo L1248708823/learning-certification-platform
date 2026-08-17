@@ -4,6 +4,7 @@ import com.learningplatform.common.api.ErrorCode;
 import com.learningplatform.common.exception.BusinessException;
 import com.learningplatform.iam.user.UserAccountEntity;
 import com.learningplatform.iam.user.UserAccountMapper;
+import com.learningplatform.iam.user.UserStatus;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,7 +64,7 @@ public class RegistrationService {
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setPhone(request.phone());
         user.setDisplayName(request.username());
-        user.setStatus("ACTIVE");
+        user.setStatus(UserStatus.ACTIVE);
 
         try {
             userMapper.insertUser(user);

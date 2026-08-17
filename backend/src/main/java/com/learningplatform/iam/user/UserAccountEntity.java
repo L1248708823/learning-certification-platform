@@ -39,9 +39,10 @@ public class UserAccountEntity {
     private String displayName;
 
     /**
-     * 账号状态。首期注册只写入 {@code ACTIVE}；新增状态时需要同时定义允许值、迁移规则和鉴权行为。
+     * 账号状态。持久化编码由 {@link UserStatus} 定义，数据库约束限制为已定义值；新增状态时需要同时
+     * 定义迁移规则和鉴权行为。
      */
-    private String status;
+    private UserStatus status;
 
     /** 记录创建时间，由数据库默认值写入。 */
     private LocalDateTime createdAt;
