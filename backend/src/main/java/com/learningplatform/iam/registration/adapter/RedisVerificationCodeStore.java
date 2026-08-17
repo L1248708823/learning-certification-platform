@@ -1,5 +1,6 @@
-package com.learningplatform.iam.registration;
+package com.learningplatform.iam.registration.adapter;
 
+import com.learningplatform.iam.registration.port.VerificationCodeStore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;

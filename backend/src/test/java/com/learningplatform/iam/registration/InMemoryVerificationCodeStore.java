@@ -1,5 +1,6 @@
 package com.learningplatform.iam.registration;
 
+import com.learningplatform.iam.registration.port.VerificationCodeStore;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;

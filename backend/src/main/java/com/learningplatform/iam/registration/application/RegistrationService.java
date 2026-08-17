@@ -1,4 +1,4 @@
-package com.learningplatform.iam.registration;
+package com.learningplatform.iam.registration.application;
 
 import com.learningplatform.common.api.ErrorCode;
 import com.learningplatform.common.exception.BusinessException;
@@ -46,24 +46,24 @@ public class RegistrationService {
      *
      * <p>数据库写入成功前验证码保持可用，避免 MySQL 回滚后用户失去重试凭据。
      *
-     * @param request 已通过 Web 参数校验的注册请求
+     * @param command 已完成基础参数校验的注册输入
      * @return 新用户的最小公开资料
      * @throws BusinessException 验证码无效或用户名、手机号已存在时抛出业务错误
      */
     @Transactional
-    public RegistrationResult register(RegisterRequest request) {
-        verificationCodeService.assertValid(request.phone(), request.code());
+    public RegisteredUser register(RegisterLearnerCommand command) {
+        verificationCodeService.assertValid(command.phone(), command.code());
 
-        if (userMapper.findByPhone(request.phone()) != null
-                || userMapper.findByUsername(request.username()) != null) {
+        if (userMapper.findByPhone(command.phone()) != null
+                || userMapper.findByUsername(command.username()) != null) {
             throw new BusinessException(ErrorCode.USER_EXISTS);
         }
 
         UserAccountEntity user = new UserAccountEntity();
-        user.setUsername(request.username());
-        user.setPassword(passwordEncoder.encode(request.password()));
-        user.setPhone(request.phone());
-        user.setDisplayName(request.username());
+        user.setUsername(command.username());
+        user.setPassword(passwordEncoder.encode(command.password()));
+        user.setPhone(command.phone());
+        user.setDisplayName(command.username());
         user.setStatus(UserStatus.ACTIVE);
 
         try {
@@ -75,8 +75,8 @@ public class RegistrationService {
             throw new BusinessException(ErrorCode.USER_EXISTS);
         }
 
-        verificationCodeService.consume(request.phone(), request.code());
-        return new RegistrationResult(
+        verificationCodeService.consume(command.phone(), command.code());
+        return new RegisteredUser(
                 user.getId(),
                 user.getUsername(),
                 user.getPhone(),

@@ -1,6 +1,7 @@
-package com.learningplatform.iam.registration;
+package com.learningplatform.iam.registration.web;
 
 import com.learningplatform.common.api.ApiResponse;
+import com.learningplatform.iam.registration.application.VerificationCodeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;

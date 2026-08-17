@@ -1,6 +1,8 @@
 package com.learningplatform.iam.registration;
 
 import com.learningplatform.common.exception.BusinessException;
+import com.learningplatform.iam.registration.application.VerificationCodeService;
+import com.learningplatform.iam.registration.port.SmsSender;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;

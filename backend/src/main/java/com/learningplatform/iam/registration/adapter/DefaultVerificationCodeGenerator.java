@@ -1,5 +1,6 @@
-package com.learningplatform.iam.registration;
+package com.learningplatform.iam.registration.adapter;
 
+import com.learningplatform.iam.registration.port.VerificationCodeGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
