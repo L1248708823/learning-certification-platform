@@ -1,6 +1,9 @@
-package com.learningplatform.iam.registration;
+package com.learningplatform.iam.registration.web;
 
 import com.learningplatform.common.api.ApiResponse;
+import com.learningplatform.iam.registration.application.RegisterLearnerCommand;
+import com.learningplatform.iam.registration.application.RegistrationService;
+import com.learningplatform.iam.registration.application.RegisteredUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @ConditionalOnProperty(name = "app.iam.enabled", havingValue = "true", matchIfMissing = true)
-@Tag(name = "IAM / 注册", description = "学习者使用手机号验证码注册。")
+@Tag(name = "注册", description = "学习者使用手机号验证码注册。")
 public class RegistrationController {
 
     private final RegistrationService registrationService;
@@ -43,6 +46,11 @@ public class RegistrationController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "手机号或用户名已注册，错误码为 2003")
     })
     public ApiResponse<RegistrationResult> register(@Valid @RequestBody RegisterRequest request) {
-        return ApiResponse.success(registrationService.register(request));
+        RegisteredUser registeredUser = registrationService.register(new RegisterLearnerCommand(
+                request.phone(),
+                request.code(),
+                request.username(),
+                request.password()));
+        return ApiResponse.success(RegistrationResult.from(registeredUser));
     }
 }

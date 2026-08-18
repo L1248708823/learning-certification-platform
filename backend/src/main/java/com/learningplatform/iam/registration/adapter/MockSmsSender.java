@@ -1,5 +1,6 @@
-package com.learningplatform.iam.registration;
+package com.learningplatform.iam.registration.adapter;
 
+import com.learningplatform.iam.registration.port.SmsSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

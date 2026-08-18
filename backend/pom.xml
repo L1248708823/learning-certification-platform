@@ -43,6 +43,13 @@
       <artifactId>spring-security-crypto</artifactId>
     </dependency>
 
+    <!-- Spring Authorization Server：OAuth2/OIDC 授权服务器，授权码 + PKCE、JWT/JWKS、JDBC 存储由 #24 引入。
+         版本由 Boot 3.5 的 dependencyManagement 统一管理（对应 SAS 1.5.x），不显式声明。 -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-oauth2-authorization-server</artifactId>
+    </dependency>
+
     <!-- Redis：注册验证码；登出 token 黑名单由首期-03b（#24）引入 -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -94,7 +101,14 @@
       <optional>true</optional>
     </dependency>
 
-    <!-- OpenAPI 文档：从 Spring MVC 路由和校验注解生成契约，并提供本地 Swagger UI。Boot 3 使用 Springdoc v2。 -->
+    <!-- Knife4j UI：只提供 doc.html 与前端静态资源，避免引入与 Boot 3.5 不兼容的旧 Starter 扩展。 -->
+    <dependency>
+      <groupId>com.github.xiaoymin</groupId>
+      <artifactId>knife4j-openapi3-ui</artifactId>
+      <version>4.5.0</version>
+    </dependency>
+
+    <!-- 文档模型生成器：与 Spring Boot 3.5 的 Spring Framework 6.2 对齐，由 Knife4j UI 读取。 -->
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -105,6 +119,13 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Security 测试支持：#24 集成测试用 SecurityMockMvcRequestPostProcessors.csrf() 提交登录与授权确认表单 -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
     </dependency>
 

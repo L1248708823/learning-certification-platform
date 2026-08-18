@@ -1,7 +1,10 @@
-package com.learningplatform.iam.registration;
+package com.learningplatform.iam.registration.application;
 
 import com.learningplatform.common.api.ErrorCode;
 import com.learningplatform.common.exception.BusinessException;
+import com.learningplatform.iam.registration.port.SmsSender;
+import com.learningplatform.iam.registration.port.VerificationCodeGenerator;
+import com.learningplatform.iam.registration.port.VerificationCodeStore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 

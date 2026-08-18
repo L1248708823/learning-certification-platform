@@ -3,21 +3,23 @@ package com.learningplatform.iam.user;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.learningplatform.common.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 /**
  * IAM 用户落库模型。其他模块只保存 user_id，不直接引用此模型。
  *
  * <p>和 {@code DictItemEntity} 一样：MP 需要可变 JavaBean，访问器交给 Lombok。
  * 不用 {@code @Data}，尤其这里有 password，{@code toString} 会把哈希打进日志。
+ *
+ * <p>创建时间、更新时间和乐观锁版本由 {@link BaseEntity} 承载，{@code iam.user} 表存在对应列；
+ * {@code version} 由 MyBatis-Plus 乐观锁插件在更新时维护。
  */
 @Getter
 @Setter
 @TableName("iam.`user`")
-public class UserAccountEntity {
+public class UserAccountEntity extends BaseEntity {
 
     /** 用户主键，由 MySQL 自增生成。 */
     @TableId(type = IdType.AUTO)
@@ -43,16 +45,4 @@ public class UserAccountEntity {
      * 定义迁移规则和鉴权行为。
      */
     private UserStatus status;
-
-    /** 记录创建时间，由数据库默认值写入。 */
-    private LocalDateTime createdAt;
-
-    /** 记录最近更新时间，由数据库在更新行时自动维护。 */
-    private LocalDateTime updatedAt;
-
-    /**
-     * 记录版本号。当前注册写入 {@code 0}，尚未启用 MyBatis-Plus 乐观锁；启用时需要补充
-     * {@code @Version} 和相应更新条件。
-     */
-    private Long version;
 }

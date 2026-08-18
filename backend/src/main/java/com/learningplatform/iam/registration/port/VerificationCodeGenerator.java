@@ -1,4 +1,4 @@
-package com.learningplatform.iam.registration;
+package com.learningplatform.iam.registration.port;
 
 /** 生成注册流程使用的一次性验证码。 */
 @FunctionalInterface

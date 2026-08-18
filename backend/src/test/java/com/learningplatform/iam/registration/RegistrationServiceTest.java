@@ -1,6 +1,9 @@
 package com.learningplatform.iam.registration;
 
 import com.learningplatform.common.exception.BusinessException;
+import com.learningplatform.iam.registration.application.RegisterLearnerCommand;
+import com.learningplatform.iam.registration.application.RegistrationService;
+import com.learningplatform.iam.registration.application.VerificationCodeService;
 import com.learningplatform.iam.user.UserAccountEntity;
 import com.learningplatform.iam.user.UserAccountMapper;
 import org.junit.jupiter.api.Test;
@@ -37,7 +40,7 @@ class RegistrationServiceTest {
         when(userMapper.findByUsername(any())).thenReturn(null);
         when(userMapper.insertUser(any())).thenThrow(new DataIntegrityViolationException("duplicate"));
 
-        assertThatThrownBy(() -> service.register(new RegisterRequest(
+        assertThatThrownBy(() -> service.register(new RegisterLearnerCommand(
                 "13800138000", "123456", "alice", "Password123!")))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("用户已存在");
@@ -49,7 +52,7 @@ class RegistrationServiceTest {
     void register_withoutValidCode_shouldNotRevealExistingUsername() {
         when(userMapper.findByUsername("alice")).thenReturn(new UserAccountEntity());
 
-        assertThatThrownBy(() -> service.register(new RegisterRequest(
+        assertThatThrownBy(() -> service.register(new RegisterLearnerCommand(
                 "13800138000", "000000", "alice", "Password123!")))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("验证码无效或已过期");

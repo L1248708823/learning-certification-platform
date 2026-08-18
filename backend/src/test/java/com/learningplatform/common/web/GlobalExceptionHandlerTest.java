@@ -125,10 +125,10 @@ class GlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.paths['/api/v1/_demo/echo']").doesNotExist());
     }
 
-    /** Swagger UI 是本地学习和人工调试的入口，依赖升级后也必须保持可访问。 */
+    /** Knife4j 是本地学习和人工调试的入口，依赖升级后也必须保持可访问。 */
     @Test
-    void swaggerUi_shouldBeAvailable() throws Exception {
-        mockMvc.perform(get("/swagger-ui/index.html"))
+    void knife4jUi_shouldBeAvailable() throws Exception {
+        mockMvc.perform(get("/doc.html"))
                 .andExpect(status().isOk());
     }
 }

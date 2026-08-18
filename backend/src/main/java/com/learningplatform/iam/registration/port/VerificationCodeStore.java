@@ -1,4 +1,4 @@
-package com.learningplatform.iam.registration;
+package com.learningplatform.iam.registration.port;
 
 import java.time.Duration;
 
@@ -6,7 +6,7 @@ import java.time.Duration;
  * 验证码和发送频率的存储边界。
  *
  * <p>生产实现是 Redis，测试实现是内存 Map。业务规则（五分钟、六十秒、先核对再消费）
- * 写在 {@link VerificationCodeService}，这里只负责原子读写。
+ * 写在验证码应用服务中，这里只负责原子读写。
  * 把存储切出来，是为了规则测试不必起容器。
  */
 public interface VerificationCodeStore {

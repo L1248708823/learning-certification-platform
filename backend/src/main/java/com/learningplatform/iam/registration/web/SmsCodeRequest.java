@@ -1,4 +1,4 @@
-package com.learningplatform.iam.registration;
+package com.learningplatform.iam.registration.web;
 
 import com.learningplatform.iam.validation.MainlandMobilePhone;
 import io.swagger.v3.oas.annotations.media.Schema;

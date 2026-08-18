@@ -1,6 +1,7 @@
-package com.learningplatform.iam.registration;
+package com.learningplatform.iam.registration.web;
 
 import com.learningplatform.common.api.ApiResponse;
+import com.learningplatform.iam.registration.application.VerificationCodeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/sms")
 @ConditionalOnProperty(name = "app.iam.enabled", havingValue = "true", matchIfMissing = true)
-@Tag(name = "IAM / 注册", description = "学习者使用手机号验证码注册。")
+@Tag(name = "注册", description = "学习者使用手机号验证码注册。")
 public class SmsController {
 
     private final VerificationCodeService verificationCodeService;
