@@ -8,6 +8,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -87,6 +88,8 @@ public class AuthorizationServerConfig {
                                 .authorizationService(authorizationService)
                                 .authorizationConsentService(authorizationConsentService)
                                 .authorizationServerSettings(authorizationServerSettings)
+                                // 客户端 scope 含 openid，启用 OIDC 1.0 才合法；否则 SAS 默认拒绝
+                                .oidc(Customizer.withDefaults())
                                 .tokenGenerator(tokenGenerator))
                 .authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated())
                 .exceptionHandling((exceptions) -> exceptions
@@ -207,8 +210,15 @@ public class AuthorizationServerConfig {
         };
     }
 
-    /** 授权服务器本地 JWT 解码器，用同一 JWKS 校验，供登出接口解析 token。 */
+    /**
+     * 授权服务器本地 JWT 解码器，用同一 JWKS 校验，供登出接口解析 token。
+     *
+     * <p>{@code @Primary} 是因为启用 OIDC 后 SAS 需要一个默认 JwtDecoder，而资源服务器的
+     * {@link JwtDecoderWithBlacklist} 也实现了同接口，不加主次会因候选不唯一启动失败。
+     * OIDC 校验 id_token 不走登出黑名单，取无包装的这一个；资源服务器链仍显式注入黑名单包装器。
+     */
     @Bean
+    @Primary
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
     }

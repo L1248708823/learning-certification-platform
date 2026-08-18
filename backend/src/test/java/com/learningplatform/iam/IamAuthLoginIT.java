@@ -107,24 +107,9 @@ class IamAuthLoginIT {
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection());
 
-        // 带 session 重放授权请求，进入授权确认页
-        MvcResult consentRedirect = mockMvc.perform(get(authorizeUrl).session(session))
-                .andExpect(status().is3xxRedirection())
-                .andReturn();
-        String consentUrl = consentRedirect.getResponse().getRedirectedUrl();
-        assertThat(consentUrl).startsWith("/oauth2/consent");
-
-        mockMvc.perform(get(consentUrl).session(session))
-                .andExpect(status().isOk());
-
-        // 提交授权确认，SAS 回跳 redirect_uri 并携带一次性 code
-        MvcResult codeResult = mockMvc.perform(post("/oauth2/consent")
-                        .session(session)
-                        .param("client_id", "learning-web")
-                        .param("state", state)
-                        .param("scope", "openid")
-                        .param("scope", "profile")
-                        .with(csrf()))
+        // 带 session 重放授权请求。客户端默认 requireAuthorizationConsent=false，不弹授权确认页，
+        // SAS 直接回跳 redirect_uri 并携带一次性 code。
+        MvcResult codeResult = mockMvc.perform(get(authorizeUrl).session(session))
                 .andExpect(status().is3xxRedirection())
                 .andReturn();
         String code = UriComponentsBuilder.fromUriString(codeResult.getResponse().getRedirectedUrl())
